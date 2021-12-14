@@ -186,10 +186,10 @@ class Hero:
             print(self.name + ' passed with ' + str(points_left) + '.')
         elif meister and not mega_meister and points_left < 0:
             print('Though ' + self.name + 'should have failed with ' + str(points_left) +
-                  ', our hero was stroke by the Gods and passed meisterlich.')
+                  ', our hero was struck by the Gods and passed meisterlich.')
         elif mega_meister and points_left < 0:
             print('Though ' + self.name + 'should have failed with ' + str(points_left) +
-                  ', our hero was stroke by the Gods and passed mega meisterlich.')
+                  ', our hero was struck by the Gods and passed mega meisterlich.')
 
         # Extra messages for meisterlich and patzing
         if meister and not mega_meister:
