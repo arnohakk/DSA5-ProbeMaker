@@ -17,6 +17,7 @@ class Hero:
 
     def __init__(self, file, show_values=False):
 
+        # Prepare and load hero's .json file
         f = open(file)
         h_data = json.load(f)
         self.name = h_data['name']
@@ -134,7 +135,7 @@ class Hero:
         meister = False
         mega_meister = False
 
-        points_left = self.tal[talent][3]  # Get numer of talent points
+        points_left = self.tal[talent][3]  # Get number of talent points
 
         print('=======================')
         print('The mighty ' + self.name + ' has ' + str(points_left) + ' talent points when he tries to ' +
@@ -207,8 +208,6 @@ group = dict()  # Dict to collect all Hero objects
 names = list()  # List to collect all names of heros in group
 
 # Create total path to hero files
-print(data_folder)
-
 for hero in heros:
     hfiles[hero] = data_folder / hero
 
@@ -220,6 +219,8 @@ for h in hfiles:
 
 # Playing loop asking for names and modifiers for talent probes
 while playing:
+
+    # If more than one hero is loaded
     if len(group) > 1:
         name = input('Who wants to perform something(' + str(names) + ')? (Enter "feddich" to quit.)')
         if name != 'feddich':
@@ -229,7 +230,7 @@ while playing:
                           ' enter "feddich" to quit.)')
         else:
             value = name
-
+    # Quitting program
     if value == 'feddich':
         playing = False
         if len(group) == 1:
@@ -237,6 +238,7 @@ while playing:
         else:
             for h in names:
                 print(h + ' has left the building.')
+    # Perform probe
     else:
         probe_type = value.split(',')
         if len(probe_type) == 1:
