@@ -244,7 +244,7 @@ def run(group: List[Hero]):
     while playing:
         modifier = 0
         if len(group) == 1:
-            name = group[0].name
+            name, stuff = list(group.items())[0]            
         else:
             while True:
                 name = input(
@@ -257,6 +257,10 @@ def run(group: List[Hero]):
                 else:
                     break
         if name != 'feddich':
+            print('=')
+            print(group.keys())
+            print(type(name))
+            print('=')
             Digga = group[name]
             while True:
                 user_action_and_mod = input(
@@ -301,6 +305,3 @@ if __name__ == "__main__":
         group[Digga.name] = Digga
 
     run(group)
-
-
-
