@@ -225,11 +225,11 @@ while playing:
         name = input('Who wants to perform something(' + str(names) + ')? (Enter "feddich" to quit.)')
         if name != 'feddich':
             Digga = group[name]
-            value = input("Oh mighty " + Digga.name + ', what are you trying to accomplish ' +
-                          'next? (Enter talent name, optional modifier separated by a comma,' +
-                          ' enter "feddich" to quit.)')
         else:
             value = name
+    value = input("Oh mighty " + Digga.name + ', what are you trying to accomplish ' +
+                  'next? (Enter talent name, optional modifier separated by a comma,' +
+                  ' enter "feddich" to quit.)')
     # Quitting program
     if value == 'feddich':
         playing = False
