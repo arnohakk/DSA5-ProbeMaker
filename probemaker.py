@@ -271,11 +271,9 @@ def run(group: List[Hero]):
                     print("Misspelled? Try again ;-)")
                 else:
                     break
+            playing = Digga.perform_action(user_action, modifier)
         else:
-            user_action = name
-
-        playing = Digga.perform_action(user_action, modifier)
-
+            playing = False
 
 if __name__ == "__main__":
 
