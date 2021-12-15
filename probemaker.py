@@ -263,11 +263,12 @@ def run(group: List[Hero]):
                 )
                 if ',' in user_action_and_mod:
                     user_action = user_action_and_mod.split(',')[0].replace(' ', '')
-                    modifier = user_action_and_mod.split(',')[1].replace(' ', '')
+                    modifier = int(user_action_and_mod.split(',')[1].replace(' ', ''))
                 else:
                     user_action = user_action_and_mod
+                print(f"You are trying to perform {user_action} with modifier {modifier}...")
                 if user_action not in Digga.tal and user_action != "feddich":
-                    warnings.warn("This action is not known!")
+                    warnings.warn(f"This action is not known! ({user_action})")
                     print("Misspelled? Try again ;-)")
                 else:
                     break
