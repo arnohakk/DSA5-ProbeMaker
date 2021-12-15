@@ -263,7 +263,7 @@ def run(group: List[Hero]):
                 )
                 if ',' in user_action_and_mod:
                     user_action = user_action_and_mod.split(',')[0].replace(' ', '')
-                    modifier = user_action_and_mod.split(',')[0].replace(' ', '')
+                    modifier = user_action_and_mod.split(',')[1].replace(' ', '')
                 else:
                     user_action = user_action_and_mod
                 if user_action not in Digga.tal and user_action != "feddich":
