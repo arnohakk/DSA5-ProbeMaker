@@ -243,16 +243,19 @@ def run(group: List[Hero]):
     playing = True  # Check whether playing loop shall be stopped
     while playing:
         modifier = 0
-        while True:
-            name = input(
-                 'Who wants to perform something(' + str(names) + ')? '
-                 '(Enter "feddich" to quit.) '
-            )
-            if name not in group and name != "feddich":
-                warnings.warn("This hero is not known!")
-                print("Please provide a valid hero name!!!")
-            else:
-                break
+        if len(group) == 1:
+            name = group[0].name
+        else:
+            while True:
+                name = input(
+                     'Who wants to perform something(' + str(names) + ')? '
+                     '(Enter "feddich" to quit.) '
+                )
+                if name not in group and name != "feddich":
+                    warnings.warn("This hero is not known!")
+                    print("Please provide a valid hero name!!!")
+                else:
+                    break
         if name != 'feddich':
             Digga = group[name]
             while True:
