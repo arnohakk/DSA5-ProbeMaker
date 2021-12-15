@@ -1,11 +1,23 @@
 #!', 'usr', 'bin', 'env python
 # -*- coding: utf-8 -*-
 
+import os
 import json
 from random import randint
 from pathlib import Path
-from settings import *
+import warnings
+from typing import List
 
+debug = True
+if debug:
+    print(os.listdir())
+    print(os.getcwd())
+
+if "settings.py" in os.listdir():
+    from settings import *
+else:
+    # fallback if no custom settings are provided
+    from settings_template import *
 
 class Hero:
     """ Class to create an Hero object from heros .json file
@@ -121,7 +133,7 @@ class Hero:
             print(self.tal)
             print('=======================')
 
-    def probe(self, talent, mod=0):
+    def probe(self, talent: str, mod: int=0):
         """Method to perform a talent probe
 
         talent -- name of talent to probe
@@ -201,53 +213,91 @@ class Hero:
         elif mega_patz:
             print(self.name + ' is an idiot and mega patzed.')
 
+    def export(self, mode: str="object"):
+        """Method to export the hero either in JSON for Optolith or as an pickled object.
+        The idea is that the history of Proben can be tracked and analysed so that the corresponding
+        talents or attributes can be leveled ;-)
+        """
 
-playing = True  # Check whether playing loop shall be stopped
-hfiles = dict()  # Dict for heros' .json files
-group = dict()  # Dict to collect all Hero objects
-names = list()  # List to collect all names of heros in group
+    def perform_action(self, user_action: str, modifier: int = 0) -> bool:
+        # Quitting program
+        if user_action == 'feddich':
+            if len(group) == 1:
+                print(self.name + ' has left the building.')
+            else:
+                for h in names:
+                    print(h + ' has left the building.')
+            return False
 
-# Create total path to hero files
-for hero in heros:
-    hfiles[hero] = data_folder / hero
+        # Perform probe
+        else:
+            if user_action in self.tal:
+                self.probe(user_action, modifier)
+            else:
+                raise ValueError('Talent ' + user_action + " not found, enter 'feddich' to quit")
+            return True
 
-# Create Hero objects
-for h in hfiles:
-    Digga = Hero(hfiles[h], show_values)
-    names.append(Digga.name)
-    group[Digga.name] = Digga
-
-# Playing loop asking for names and modifiers for talent probes
-while playing:
-
-    # If more than one hero is loaded
-    if len(group) > 1:
-        name = input('Who wants to perform something(' + str(names) + ')? (Enter "feddich" to quit.)')
+def run(group: List[Hero]):
+    # Playing loop asking for names and modifiers for talent probes
+    # TODO never do an endless while loop, use a max_round = 10000 or so
+    playing = True  # Check whether playing loop shall be stopped
+    while playing:
+        modifier = 0
+        if len(group) == 1:
+            name, stuff = list(group.items())[0]
+        else:
+            while True:
+                name = input(
+                     'Who wants to perform something(' + str(names) + ')? '
+                     '(Enter "feddich" to quit.) '
+                )
+                if name not in group and name != "feddich":
+                    warnings.warn("This hero is not known!")
+                    print("Please provide a valid hero name!!!")
+                else:
+                    break
         if name != 'feddich':
             Digga = group[name]
+            while True:
+                user_action_and_mod = input(
+                    "Oh mighty " + Digga.name + ', what are you trying to accomplish ' +
+                    'next? (Enter talent name, optional modifier separated by a comma,' +
+                    ' enter "feddich" to quit.) '
+                )
+                if ',' in user_action_and_mod:
+                    user_action = user_action_and_mod.split(',')[0].replace(' ', '')
+                    modifier = int(user_action_and_mod.split(',')[1].replace(' ', ''))
+                else:
+                    user_action = user_action_and_mod
+                print(f"You are trying to perform {user_action} with modifier {modifier}...")
+                if user_action not in Digga.tal and user_action != "feddich":
+                    warnings.warn(f"This action is not known! ({user_action})")
+                    print("Misspelled? Try again ;-)")
+                else:
+                    break
+            playing = Digga.perform_action(user_action, modifier)
         else:
-            value = name
-    value = input("Oh mighty " + Digga.name + ', what are you trying to accomplish ' +
-                  'next? (Enter talent name, optional modifier separated by a comma,' +
-                  ' enter "feddich" to quit.)')
-    # Quitting program
-    if value == 'feddich':
-        playing = False
-        if len(group) == 1:
-            print(Digga.name + ' has left the building.')
-        else:
-            for h in names:
-                print(h + ' has left the building.')
-    # Perform probe
-    else:
-        probe_type = value.split(',')
-        if len(probe_type) == 1:
-            try:
-                Digga.probe(value)
-            except:
-                print('Talent ' + value + " not found, enter 'feddich' to quit")
-        else:
-            try:
-                Digga.probe(probe_type[0], int(probe_type[1]))
-            except:
-                print('Talent ' + probe_type[0] + " not found, enter 'feddich' to quit")
+            playing = False
+
+if __name__ == "__main__":
+
+    hfiles = dict()  # Dict for heros' .json files
+    group = dict()  # Dict to collect all Hero objects
+    names = list()  # List to collect all names of heros in group
+
+    # Create total path to hero files
+    for hero in heros:
+        hfiles[hero] = (data_folder / hero).resolve()
+
+    if debug:
+        print(heros)
+        print("Data folder", data_folder)
+        print(hfiles)
+
+    # Create Hero objects
+    for h in hfiles:
+        Digga = Hero(hfiles[h], show_values)
+        names.append(Digga.name)
+        group[Digga.name] = Digga
+
+    run(group)
