@@ -54,11 +54,22 @@ class Hero:
         self.attr['KO'] = attr_dict['ATTR_7'] if 'ATTR_7' in attr_dict else 8
         self.attr['KK'] = attr_dict['ATTR_8'] if 'ATTR_8' in attr_dict else 8
 
-        if show_values:
-            print('These are ' + self.name + "'s basic atrributes:")
-            for att in self.attr:
-                print(att + ': ' + str(self.attr[att]))
-            print('=======================')
+        # Get race and compute derived stats
+        self.ap = h_data['ap']
+        self.LP_max = 2 * self.attr['KO']
+        self.race = h_data['r']
+        if self.race == 'R_1':
+            self.race == 'Human'
+            self.LP_max = self.LP_max + 5
+        elif self.race == 'R_2':
+            self.race == 'Halfelf'
+            self.LP_max = self.LP_max + 5
+        elif self.race == 'R_3':
+            self.race == 'Elf'
+            self.LP_max = self.LP_max + 2
+        elif self.race == 'R_4':
+            self.race == 'Dwarf'
+            self.LP_max = self.LP_max + 8
 
         # Talents
         talents = h_data['talents']  # Get data from .json file
@@ -129,7 +140,16 @@ class Hero:
         self.tal['wichsen'] = ['MU', 'IN', 'KK', 5000]
 
         if show_values:
-            print('These are ' + self.name + "'s talents:")
+            print('These are ' + self.name + "'s basic atrributes:")
+            print('=======================')
+
+            for att in self.attr:
+                print(att + ': ' + str(self.attr[att]))
+            print('=======================')
+            print('These are ' + self.name + "'s derived atrributes:")
+            print(f'LP: {self.LP_max}')
+            print('=======================')
+            print(f"These are {self.name}'s talents:")
             print('=======================')
             print(self.tal)
             print('=======================')
