@@ -134,6 +134,15 @@ class Hero:
             print(self.tal)
             print('=======================')
 
+        # Get everything that can be probed on
+        self.possible_probes = list()
+        # Talents
+        for key in self.tal.keys():
+            self.possible_probes.append(key)
+        # Attributes
+        for key in self.attr.keys():
+            self.possible_probes.append(key)
+
     def perform_attr_probe(self, attr: str, mod: int = 0):
         print(f"The mighty {self.name} has incredible {self.attr[attr]} points in {attr}," +
               f"the modifier for this probe is {mod}")
@@ -303,7 +312,7 @@ def run(group: List[Hero]):
                     user_action = user_action_and_mod
                 print(f"You are trying to perform {user_action} with modifier {modifier}...")
 
-                if user_action not in Digga.tal and user_action not in Digga.attr and user_action != "feddich":
+                if user_action not in Digga.possible_probes and user_action != "feddich":
                     warnings.warn(f"This action is not known! ({user_action})")
                     print("Misspelled? Try again ;-)")
                 else:
