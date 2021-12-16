@@ -19,6 +19,7 @@ else:
     # fallback if no custom settings are provided
     from settings_template import *
 
+
 class Hero:
     """ Class to create an Hero object from heros .json file
 
@@ -71,7 +72,7 @@ class Hero:
         self.tal['Schwimmen'] = ['GE', 'KO', 'KK', talents['TAL_7'] if 'TAL_7' in talents else 0]
         self.tal['Selbstbeherrschung'] = ['MU', 'MU', 'KO', talents['TAL_8'] if 'TAL_8' in talents else 0]
         self.tal['Singen'] = ['KL', 'CH', 'KO', talents['TAL_1'] if 'TAL_1' in talents else 0]
-        self.tal['Sinnesschärfe'] = ['KL', 'IN', 'IN', talents['TAL_9'] if 'TAL_9' in talents else 0]
+        self.tal['Sinnesschaerfe'] = ['KL', 'IN', 'IN', talents['TAL_9'] if 'TAL_9' in talents else 0]
         self.tal['Tanzen'] = ['KL', 'CH', 'GE', talents['TAL_10'] if 'TAL_10' in talents else 0]
         self.tal['Taschendiebstahl'] = ['MU', 'FF', 'GE', talents['TAL_1'] if 'TAL_1' in talents else 0]
         self.tal['Verbergen'] = ['MU', 'IN', 'GE', talents['TAL_11'] if 'TAL_11' in talents else 0]
@@ -87,7 +88,7 @@ class Hero:
         self.tal['Verkleiden'] = ['IN', 'CH', 'GE', talents['TAL_20'] if 'TAL_20' in talents else 0]
         self.tal['Willenskraft'] = ['MU', 'IN', 'CH', talents['TAL_21'] if 'TAL_21' in talents else 0]
 
-        self.tal['Fährtensuchen'] = ['MU', 'IN', 'GE', talents['TAL_22'] if 'TAL_23' in talents else 0]
+        self.tal['Faehrtensuchen'] = ['MU', 'IN', 'GE', talents['TAL_22'] if 'TAL_23' in talents else 0]
         self.tal['Fesseln'] = ['KL', 'FF', 'KK', talents['TAL_24'] if 'TAL_24' in talents else 0]
         self.tal['Fischen u Angeln'] = ['FF', 'GE', 'KO', talents['TAL_25'] if 'TAL_25' in talents else 0]
         self.tal['Orientierung'] = ['KL', 'IN', 'IN', talents['TAL_26'] if 'TAL_26' in talents else 0]
@@ -105,7 +106,7 @@ class Hero:
         self.tal['Rechnen'] = ['KL', 'KL', 'IN', talents['TAL_37'] if 'TAL_37' in talents else 0]
         self.tal['Rechtskunde'] = ['KL', 'KL', 'IN', talents['TAL_37'] if 'TAL_37' in talents else 0]
         self.tal['Sagen u Legenden'] = ['KL', 'KL', 'IN', talents['TAL_38'] if 'TAL_38' in talents else 0]
-        self.tal['Sphärenkunde'] = ['KL', 'KL', 'IN', talents['TAL_39'] if 'TAL_39' in talents else 0]
+        self.tal['Sphaerenkunde'] = ['KL', 'KL', 'IN', talents['TAL_39'] if 'TAL_39' in talents else 0]
         self.tal['Sternkunde'] = ['KL', 'KL', 'IN', talents['TAL_40'] if 'TAL_40' in talents else 0]
 
         self.tal['Alchimie'] = ['MU', 'KL', 'FF', talents['TAL_41'] if 'TAL_41' in talents else 0]
@@ -133,7 +134,35 @@ class Hero:
             print(self.tal)
             print('=======================')
 
-    def probe(self, talent: str, mod: int=0):
+    def perform_attr_probe(self, attr: str, mod: int = 0):
+        print(f"The mighty {self.name} has incredible {self.attr[attr]} points in {attr}," +
+              f"the modifier for this probe is {mod}")
+        roll = randint(1, 20)
+        res = self.attr[attr] - roll + mod
+        print(f'The die shows a {roll}')
+        if res >= 0 and roll != 20:
+            print(f"{self.name} has passed")
+            if roll == 1:
+                print('Will it be meisterlich?')
+                roll2 = randint(1, 20)
+                res2 = self.attr[attr] - roll2 + mod
+                if res >= 0:
+                    print('Yes!')
+                else:
+                    print('No :(')
+        elif roll != 20:
+            print(f"{self.name} has failed")
+
+        if roll == 20:
+            print(f"{self.name} has failed, will it be a complete disaster?")
+            roll2 = randint(1, 20)
+            res2 = self.attr[attr] - roll2 + mod
+            if res <= 0:
+                print("Yes....")
+            else:
+                print("No")
+
+    def talent_probe(self, talent: str, mod: int = 0):
         """Method to perform a talent probe
 
         talent -- name of talent to probe
@@ -213,7 +242,7 @@ class Hero:
         elif mega_patz:
             print(self.name + ' is an idiot and mega patzed.')
 
-    def export(self, mode: str="object"):
+    def export(self, mode: str = "object"):
         """Method to export the hero either in JSON for Optolith or as an pickled object.
         The idea is that the history of Proben can be tracked and analysed so that the corresponding
         talents or attributes can be leveled ;-)
@@ -232,10 +261,13 @@ class Hero:
         # Perform probe
         else:
             if user_action in self.tal:
-                self.probe(user_action, modifier)
+                self.talent_probe(user_action, modifier)
+            elif user_action in self.attr:
+                self.perform_attr_probe(user_action, modifier)
             else:
                 raise ValueError('Talent ' + user_action + " not found, enter 'feddich' to quit")
             return True
+
 
 def run(group: List[Hero]):
     # Playing loop asking for names and modifiers for talent probes
@@ -261,7 +293,7 @@ def run(group: List[Hero]):
             while True:
                 user_action_and_mod = input(
                     "Oh mighty " + Digga.name + ', what are you trying to accomplish ' +
-                    'next? (Enter talent name, optional modifier separated by a comma,' +
+                    'next? (Enter talent or attribute name, optional modifier separated by a comma,' +
                     ' enter "feddich" to quit.) '
                 )
                 if ',' in user_action_and_mod:
@@ -270,7 +302,8 @@ def run(group: List[Hero]):
                 else:
                     user_action = user_action_and_mod
                 print(f"You are trying to perform {user_action} with modifier {modifier}...")
-                if user_action not in Digga.tal and user_action != "feddich":
+
+                if user_action not in Digga.tal and user_action not in Digga.attr and user_action != "feddich":
                     warnings.warn(f"This action is not known! ({user_action})")
                     print("Misspelled? Try again ;-)")
                 else:
@@ -278,6 +311,7 @@ def run(group: List[Hero]):
             playing = Digga.perform_action(user_action, modifier)
         else:
             playing = False
+
 
 if __name__ == "__main__":
 
