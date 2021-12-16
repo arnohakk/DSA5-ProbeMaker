@@ -1,2 +1,3 @@
 settings.py
+/res/*.json
 __pycache__
