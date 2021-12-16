@@ -58,7 +58,7 @@ class Hero:
             print('These are ' + self.name + "'s basic atrributes:")
             for att in self.attr:
                 print(att + ': ' + str(self.attr[att]))
-        print('=======================')
+            print('=======================')
 
         # Talents
         talents = h_data['talents']  # Get data from .json file
