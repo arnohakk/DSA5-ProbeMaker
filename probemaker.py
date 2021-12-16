@@ -7,8 +7,8 @@ from random import randint
 from pathlib import Path
 import warnings
 from typing import List
+from settings import debug
 
-debug = True
 if debug:
     print(os.listdir())
     print(os.getcwd())
@@ -330,7 +330,8 @@ def run(group: List[Hero]):
                     modifier = int(user_action_and_mod.split(',')[1].replace(' ', ''))
                 else:
                     user_action = user_action_and_mod
-                print(f"You are trying to perform {user_action} with modifier {modifier}...")
+                if debug and user_action != "feddich":
+                    print(f"You are trying to perform {user_action} with modifier {modifier}...")
 
                 if user_action not in Digga.possible_probes and user_action != "feddich":
                     warnings.warn(f"This action is not known! ({user_action})")
