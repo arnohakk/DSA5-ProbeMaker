@@ -15,7 +15,7 @@ A little tool for The Dark Eye 5th Edition ([Das Schwarze Auge 5](https://ulisse
 
 ### Implemented feature
 - Talent probes with modifier
-- Attribute probes modifier
+- Attribute probes with modifier
 ### Missing features
  No magic is possible so far.
 
