@@ -183,13 +183,13 @@ class Hero:
             print(f"{self.name} has failed")
 
         if roll == 20:
-            print(f"{self.name} has failed, will it be a complete disaster?")
+            print(f"{self.name} has failed, but will it be a complete disaster?")
             roll2 = randint(1, 20)
             res2 = self.attr[attr] - roll2 + mod
             if res <= 0:
                 print("Yes....")
             else:
-                print("No")
+                print("No, thanks to the Twelve")
 
     def talent_probe(self, talent: str, mod: int = 0):
         """Method to perform a talent probe
@@ -208,10 +208,9 @@ class Hero:
         points_left = self.tal[talent][3]  # Get number of talent points
 
         print('=======================')
-        print('The mighty ' + self.name + ' has ' + str(points_left) + ' talent points when he tries to ' +
-              talent + '.')
+        print(f'The mighty {self.name} has {points_left} talent points when he tries to {talent}.')
         if mod != 0:
-            print('Probe modified by ' + str(mod) + '.')
+            print(f'Probe modified by {mod}.')
             if mod > 0:
                 str_mod = ' + ' + str(mod)
             elif mod < 0:
@@ -220,7 +219,7 @@ class Hero:
             str_mod = ' +- ' + str(mod)
 
         rolls = [randint(1, 20), randint(1, 20), randint(1, 20)]
-        print('Rolls:')
+        print('Die rolls:')
 
         print(self.tal[talent][0] + ': ' + str(rolls[0]) + ' (' + str(self.attr[self.tal[talent][0]]) + str_mod + ')')
         print(self.tal[talent][1] + ': ' + str(rolls[1]) + ' (' + str(self.attr[self.tal[talent][1]]) + str_mod + ')')
@@ -250,13 +249,13 @@ class Hero:
         # Check whether probe was passed and give corresponding message
         # Fail message
         if not patz and not mega_patz and points_left < 0:
-            print(self.name + ' failed with ' + str(points_left) + '.')
+            print(f'{self.name} failed with {points_left}.')
         # Success messages
         elif not patz and not mega_patz and points_left >= 0:
-            print(self.name + ' passed with ' + str(points_left) + '.')
+            print(f'{self.name} passed with {points_left}.')
         elif meister and not mega_meister and points_left < 0:
-            print('Though ' + self.name + 'should have failed with ' + str(points_left) +
-                  ', our hero was struck by the Gods and passed meisterlich.')
+            print(f'Though {self.name} should have failed with {points_left} our hero was struck by the Gods' +
+                  'and passed meisterlich.')
         elif mega_meister and points_left < 0:
             print('Though ' + self.name + 'should have failed with ' + str(points_left) +
                   ', our hero was struck by the Gods and passed mega meisterlich.')
@@ -267,9 +266,9 @@ class Hero:
         elif mega_meister:
             print('... and it was mega meisterlich!')
         elif patz and not mega_patz:
-            print(self.name + ' is an idiot and patzed.')
+            print(f'{self.name} is an idiot and patzed.')
         elif mega_patz:
-            print(self.name + ' is an idiot and mega patzed.')
+            print(f'{self.name} is an gigantic idiot and mega patzed.')
 
     def export(self, mode: str = "object"):
         """Method to export the hero either in JSON for Optolith or as an pickled object.
@@ -281,10 +280,10 @@ class Hero:
         # Quitting program
         if user_action == 'feddich':
             if len(group) == 1:
-                print(self.name + ' has left the building.')
+                print(f'{self.name} has left the building.')
             else:
                 for h in names:
-                    print(h + ' has left the building.')
+                    print(f'{h} has left the building.')
             return False
 
         # Perform probe
