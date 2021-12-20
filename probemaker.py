@@ -7,11 +7,6 @@ from random import randint
 from pathlib import Path
 import warnings
 from typing import List
-from settings import debug
-
-if debug:
-    print(os.listdir())
-    print(os.getcwd())
 
 if "settings.py" in os.listdir():
     from settings import *
@@ -19,6 +14,9 @@ else:
     # fallback if no custom settings are provided
     from settings_template import *
 
+if debug:
+    print(os.listdir())
+    print(os.getcwd())
 
 class Hero:
     """ Class to create an Hero object from heros .json file
