@@ -92,6 +92,11 @@ class Hero:
         self.LP = self.LP_max
         print(f'{self.name} has {self.LP} of {self.LP_max} LP')
 
+        # Wundschwellen
+        print(self.LP_max/4)
+        print("===================")
+        aa
+
         # Talents
         talents = h_data['talents']  # Get data from .json file
         self.skills = dict()  # Dict to collect all talents
