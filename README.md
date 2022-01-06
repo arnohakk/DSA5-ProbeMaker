@@ -18,7 +18,7 @@ A little tool for The Dark Eye 5th Edition ([Das Schwarze Auge 5](https://ulisse
 - Attribute probes with modifier
 - Logging of probes and their results
 - Logging of damage taken or given (LP are not handled correctly outside the log so far.)
-- Visualization of log by running `python ana,py`
+- Visualization of log by running `python ana.py`
 
 ### Missing features
  No magic.
