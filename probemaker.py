@@ -195,17 +195,17 @@ class Hero:
         self.possible_probes = list()
         self.possible_probes.append('take_hit')
         self.possible_probes.append('give_hit')
-        self.possible_probes.append('set_LP')
-        self.possible_probes.append('set_AE')
+        self.possible_probes.append('sLP')
+        self.possible_probes.append('sAE')
+        self.possible_probes.append('cLP')
+        self.possible_probes.append('cAE')
+
         # Talents
         for key in self.skills.keys():
             self.possible_probes.append(key)
         # Attributes
         for key in self.attr.keys():
             self.possible_probes.append(key)
-            
-    def change_LP(self, value):
-        self.LP = self.LP + value
 
     def set_LP(self, value):
         self.LP = value
@@ -216,8 +216,14 @@ class Hero:
         print(f'AE set to {self.AE}')
 
     def change_AE(self, value):
-        self.AE = self.AE + value
-        print(f'AE has changed to {self.AE}')
+        old = self.AE
+        self.AE = min(self.AE + value, self.AE_max)
+        print(f'AE has changed from {orld} to {self.AE}')
+
+    def change_LP(self, value):
+        old = self.LP
+        self.LP = min(self.LP + value, self.LP_max)
+        print(f'LP has changed from {old} to {self.LP}')
 
     def perform_attr_probe(self, attr: str, mod: int = 0):
         print(f"The mighty {self.name} has incredible {self.attr[attr]} points in {attr}," +
@@ -393,12 +399,16 @@ class Hero:
                 self.take_a_hit()
             elif user_action == 'give_hit':
                 self.give_a_hit()
-            elif user_action == 'set_LP':
+            elif user_action == 'sLP':
                 self.set_LP(modifier)
-            elif user_action == 'set_AE':
+            elif user_action == 'sAE':
                 self.set_AE(modifier)
+            elif user_action == 'cLP':
+                self.change_LP(modifier)
+            elif user_action == 'cAE':
+                self.change_AE(modifier)
             else:
-                raise ValueError('Talent ' + user_action + " not found, enter 'feddich' to quit")
+                raise ValueError('Keyword ' + user_action + " not found, enter 'feddich' to quit")
             return True
 
 
@@ -465,7 +475,7 @@ def run(group: List[Hero]):
 
 if __name__ == "__main__":
     logging.basicConfig(filename='probe.log',
-                        #encoding='utf-8',
+                        # encoding='utf-8',
                         format='%(asctime)s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S;', level=logging.DEBUG)
     logger = logging.getLogger("Basic Logger")
