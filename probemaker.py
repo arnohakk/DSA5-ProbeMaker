@@ -421,11 +421,7 @@ class Hero:
     def perform_action(self, user_action: str, modifier: int = 0) -> bool:
         # Quitting program
         if user_action == 'feddich':
-            if len(group) == 1:
-                print(f'{self.name} has left the building with {self.LP} LP and {self.AE} AE.')
-            else:
-                for h in names:
-                    print(f'{h} has left the building {group[h].LP} LP and {group[h].AE} AE.')
+            print(f'{self.name} has left the building with {self.LP} LP and {self.AE} AE.')
             return False
         # Perform probe
         else:
@@ -474,8 +470,6 @@ def run(group: List[Hero]):
                     warnings.warn("This hero is not known!")
                     print("Please provide a valid hero name!!!")
                 else:
-                    for h in names:
-                        print(f'{h} has left the building {group[h].LP} LP and {group[h].AE} AE.')
                     break
         if name != 'feddich':
             Digga = group[name]
@@ -509,6 +503,8 @@ def run(group: List[Hero]):
                     break
             playing = Digga.perform_action(user_action, modifier)
         else:
+            for h in names:
+                print(f'{h} has left the building {group[h].LP} LP and {group[h].AE} AE.')
             playing = False
     logger.info('Probemaker is feddich')
 
