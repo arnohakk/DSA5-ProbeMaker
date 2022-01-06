@@ -8,6 +8,7 @@ from random import randint
 from pathlib import Path
 import warnings
 from typing import List
+from difflib import get_close_matches
 
 if "settings.py" in os.listdir():
     from settings import *
@@ -401,6 +402,12 @@ def run(group: List[Hero]):
                      '(Enter "feddich" to quit.) '
                 )
                 if name not in group and name != "feddich":
+                    matches = get_close_matches(name, list(group.keys()) + ["feddich"], cutoff=.6)
+                    if len(matches) == 1:
+                        yes_no = input(f"Misspelled? Did you mean {matches[0]}? (y/n) ")
+                        if yes_no == "y":
+                            name = matches[0]
+                            break
                     warnings.warn("This hero is not known!")
                     print("Please provide a valid hero name!!!")
                 else:
@@ -422,8 +429,17 @@ def run(group: List[Hero]):
                     print(f"You are trying to perform {user_action} with modifier {modifier}...")
 
                 if user_action not in Digga.possible_probes and user_action != "feddich":
-                    warnings.warn(f"This action is not known! ({user_action})")
-                    print("Misspelled? Try again ;-)")
+                    matches = get_close_matches(user_action, list(Digga.possible_probes) + ["feddich"], cutoff=.3)
+                    if len(matches) == 1:
+                        yes_no = input(f"Misspelled? Did you mean {matches[0]}? (y/n) ")
+                        if yes_no == "y":
+                            user_action = matches[0]
+                            break
+                    elif len(matches) > 1:
+                        print(f"Probably you meant any of {matches}. Please try again.")
+                    else:
+                        warnings.warn(f"This action is not known! ({user_action})")
+                        print("Misspelled? Try again ;-)")
                 else:
                     break
             playing = Digga.perform_action(user_action, modifier)
@@ -433,7 +449,9 @@ def run(group: List[Hero]):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='probe.log', encoding='utf-8', format='%(asctime)s %(message)s',
+    logging.basicConfig(filename='probe.log',
+                        #encoding='utf-8',
+                        format='%(asctime)s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S;', level=logging.DEBUG)
     logger = logging.getLogger("Basic Logger")
     logger.info('Probemaker started')
