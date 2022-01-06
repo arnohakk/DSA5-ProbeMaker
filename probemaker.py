@@ -58,7 +58,6 @@ class Hero:
 
         print('These are ' + self.name + "'s basic atrributes:")
         print('=======================')
-
         for att in self.attr:
             print(att + ': ' + str(self.attr[att]))
         print('=======================')
@@ -66,8 +65,8 @@ class Hero:
         # Get race and compute derived stats
         self.ap = h_data['ap']
         self.dead = False
-        self.LP_max = 2 * self.attr['KO']
 
+        self.LP_max = 2 * self.attr['KO']
         self.race = h_data['r']
         if self.race == 'R_1':
             self.race = 'Human'
@@ -221,6 +220,7 @@ class Hero:
         self.LP = value
         print(f'LP set to {self.LP}')
         self.logger.info(f'reg_event;set_LP;{self.name};{old};{self.LP}')
+        self.check_pain()
 
     def set_AE(self, value):
         old = self.AE
@@ -239,8 +239,9 @@ class Hero:
         self.LP = min(self.LP + value, self.LP_max)
         print(f'LP has changed from {old} to {self.LP}')
         self.logger.info(f'reg_event;change_LP;{self.name};{old};{self.LP}')
+        self.check_pain()
 
-        # Check if wounded( in pain)
+    def check_pain(self):    # Check if wounded( in pain)
         if self.LP > self.wundschwelle[0]:
             self.wounds = 0
         elif self.LP <= self.wundschwelle[0] and self.LP > self.wundschwelle[1]:
