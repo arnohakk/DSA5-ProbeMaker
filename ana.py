@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from settings import debug_log
 
 
 def plot_pie(data2plot, ax, title):
@@ -56,7 +57,12 @@ def plot_hits(data):
 
 
 # Get log data
-f = open("probe.log", "r")
+if debug_log:
+    log_name = 'test.log'
+elif not debug_log:
+    log_name = 'probe.log'
+
+f = open(log_name, "r")
 data = f.readlines()
 f.close()
 
