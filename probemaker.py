@@ -3,6 +3,7 @@
 
 import os
 import json
+import logging
 from random import randint
 from pathlib import Path
 import warnings
@@ -18,6 +19,7 @@ if debug:
     print(os.listdir())
     print(os.getcwd())
 
+
 class Hero:
     """ Class to create an Hero object from heros .json file
 
@@ -26,12 +28,13 @@ class Hero:
 
     """
 
-    def __init__(self, file, show_values=False):
+    def __init__(self, file, logger, show_values=False):
 
         # Prepare and load hero's .json file
         f = open(file)
         h_data = json.load(f)
         self.name = h_data['name']
+        self.logger = logger
         print('=======================')
         print('The great hero called ' + self.name + ' is being summoned into the working memory.')
         print('=======================')
@@ -164,30 +167,41 @@ class Hero:
     def perform_attr_probe(self, attr: str, mod: int = 0):
         print(f"The mighty {self.name} has incredible {self.attr[attr]} points in {attr}," +
               f"the modifier for this probe is {mod}")
+        meist = False
+        patz = False
+
         roll = randint(1, 20)
         res = self.attr[attr] - roll + mod
         print(f'The die shows a {roll}')
+
         if res >= 0 and roll != 20:
             print(f"{self.name} has passed")
+            passed = True
             if roll == 1:
                 print('Will it be meisterlich?')
                 roll2 = randint(1, 20)
                 res2 = self.attr[attr] - roll2 + mod
                 if res >= 0:
                     print('Yes!')
+                    meist = True
                 else:
                     print('No :(')
         elif roll != 20:
+            passed = False
             print(f"{self.name} has failed")
-
-        if roll == 20:
+        elif roll == 20:
             print(f"{self.name} has failed, but will it be a complete disaster?")
             roll2 = randint(1, 20)
             res2 = self.attr[attr] - roll2 + mod
             if res <= 0:
                 print("Yes....")
+                patz = True
             else:
                 print("No, thanks to the Twelve")
+        else:
+            print('This should never happen :(')
+
+        self.logger.info(f'attr_probe,{self.name},{attr},{self.attr[attr]},{mod},{roll},{res},{passed},{meist},{patz}')
 
     def talent_probe(self, talent: str, mod: int = 0):
         """Method to perform a talent probe
@@ -197,7 +211,7 @@ class Hero:
 
         """
 
-        # Boolean whether something critical occured
+        # Booleans whether something critical occured
         patz = False
         mega_patz = False
         meister = False
@@ -248,15 +262,19 @@ class Hero:
         # Fail message
         if not patz and not mega_patz and points_left < 0:
             print(f'{self.name} failed with {points_left}.')
+            passed = False
         # Success messages
         elif not patz and not mega_patz and points_left >= 0:
             print(f'{self.name} passed with {points_left}.')
+            passed = True
         elif meister and not mega_meister and points_left < 0:
             print(f'Though {self.name} should have failed with {points_left} our hero was struck by the Gods' +
                   'and passed meisterlich.')
+            passed = True
         elif mega_meister and points_left < 0:
             print('Though ' + self.name + 'should have failed with ' + str(points_left) +
                   ', our hero was struck by the Gods and passed mega meisterlich.')
+            passed = True
 
         # Extra messages for meisterlich and patzing
         if meister and not mega_meister:
@@ -267,6 +285,8 @@ class Hero:
             print(f'{self.name} is an idiot and patzed.')
         elif mega_patz:
             print(f'{self.name} is an gigantic idiot and mega patzed.')
+
+        self.logger.info(f'tal_probe,{self.name},{talent},{self.tal[talent]},{mod},{rolls},{res1},{res2},{res3},{points_left},{passed},{meister},{patz},{mega_meister},{mega_patz}')
 
     def export(self, mode: str = "object"):
         """Method to export the hero either in JSON for Optolith or as an pickled object.
@@ -338,9 +358,13 @@ def run(group: List[Hero]):
             playing = Digga.perform_action(user_action, modifier)
         else:
             playing = False
+    logger.info('Probemaker is feddich')
 
 
 if __name__ == "__main__":
+    logging.basicConfig(filename='probe.log', encoding='utf-8', format='%(asctime)s %(message)s', datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
+    logger = logging.getLogger("Basic Logger")
+    logger.info('Probemaker started')
 
     hfiles = dict()  # Dict for heros' .json files
     group = dict()  # Dict to collect all Hero objects
@@ -357,8 +381,9 @@ if __name__ == "__main__":
 
     # Create Hero objects
     for h in hfiles:
-        Digga = Hero(hfiles[h], show_values)
+        Digga = Hero(hfiles[h], logger, show_values)
         names.append(Digga.name)
         group[Digga.name] = Digga
+        logger.info(f'{Digga.name} loaded')
 
     run(group)
