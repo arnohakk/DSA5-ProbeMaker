@@ -166,7 +166,8 @@ class Hero:
             self.AE_max = 20 + self.leiteigenschaft[1]
             self.AE = self.AE_max
             print(f'{self.name} has {self.AE} of {self.AE_max} AE')
-            if 'SPELL_367' in spells: self.skills['Schelmenkleister'] = ['KL', 'IN', 'GE', spells['SPELL_367'], 'magic', 8]
+            if 'SPELL_367' in spells:
+                self.skills['Schelmenkleister'] = ['KL', 'IN', 'GE', spells['SPELL_367'], 'magic', 8]
             #######################
             # ADD MORE MAGIC HERE #
             #######################
@@ -192,17 +193,27 @@ class Hero:
 
         # Get everything that can be probed on
         self.possible_probes = list()
+        self.possible_probes.append('take_hit')
+        self.possible_probes.append('give_hit')
+        self.possible_probes.append('set_LP')
+        self.possible_probes.append('set_AE')
         # Talents
         for key in self.skills.keys():
             self.possible_probes.append(key)
         # Attributes
         for key in self.attr.keys():
             self.possible_probes.append(key)
-        self.possible_probes.append('take_hit')
-        self.possible_probes.append('give_hit')
-
+            
     def change_LP(self, value):
         self.LP = self.LP + value
+
+    def set_LP(self, value):
+        self.LP = value
+        print(f'LP set to {self.LP}')
+
+    def set_AE(self, value):
+        self.AE = value
+        print(f'AE set to {self.AE}')
 
     def change_AE(self, value):
         self.AE = self.AE + value
@@ -382,6 +393,10 @@ class Hero:
                 self.take_a_hit()
             elif user_action == 'give_hit':
                 self.give_a_hit()
+            elif user_action == 'set_LP':
+                self.set_LP(modifier)
+            elif user_action == 'set_AE':
+                self.set_AE(modifier)
             else:
                 raise ValueError('Talent ' + user_action + " not found, enter 'feddich' to quit")
             return True
