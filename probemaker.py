@@ -56,118 +56,157 @@ class Hero:
         self.attr['KO'] = attr_dict['ATTR_7'] if 'ATTR_7' in attr_dict else 8
         self.attr['KK'] = attr_dict['ATTR_8'] if 'ATTR_8' in attr_dict else 8
 
+        print('These are ' + self.name + "'s basic atrributes:")
+        print('=======================')
+
+        for att in self.attr:
+            print(att + ': ' + str(self.attr[att]))
+        print('=======================')
+
         # Get race and compute derived stats
         self.ap = h_data['ap']
         self.LP_max = 2 * self.attr['KO']
 
         self.race = h_data['r']
         if self.race == 'R_1':
-            self.race == 'Human'
+            self.race = 'Human'
             self.LP_max = self.LP_max + 5
         elif self.race == 'R_2':
-            self.race == 'Halfelf'
+            self.race = 'Halfelf'
             self.LP_max = self.LP_max + 5
         elif self.race == 'R_3':
-            self.race == 'Elf'
+            self.race = 'Elf'
             self.LP_max = self.LP_max + 2
         elif self.race == 'R_4':
-            self.race == 'Dwarf'
+            self.race = 'Dwarf'
             self.LP_max = self.LP_max + 8
+        print(f'{self.name} is a cute {self.race}!')
+
+        # Get leiteigenschaft
+        LEG = h_data['attr']['attributeAdjustmentSelected']
+        attr_dict = {'ATTR_1': 'MU', 'ATTR_2': 'KL', 'ATTR_3': 'IN', 'ATTR_4': 'CH', 'ATTR_5': 'FF',
+                     'ATTR_6': 'GE', 'ATTR_7': 'KO', 'ATTR_8': 'KK'}
+        self.leiteigenschaft = [attr_dict[LEG], self.attr[attr_dict[LEG]]]
+        print(f'{self.name}`s leiteigenschaft is {self.leiteigenschaft[0]}.')
+
         self.LP = self.LP_max
+        print(f'{self.name} has {self.LP} of {self.LP_max} LP')
 
         # Talents
         talents = h_data['talents']  # Get data from .json file
-        self.tal = dict()  # Dict to collent all talents
-        self.tal['Fliegen'] = ['MU', 'IN', 'GE', talents['TAL_1'] if 'TAL_1' in talents else 0]
-        self.tal['Gaukeleien'] = ['MU', 'CH', 'FF', talents['TAL_2'] if 'TAL_2' in talents else 0]
-        self.tal['Klettern'] = ['MU', 'GE', 'KK', talents['TAL_3'] if 'TAL_3' in talents else 0]
-        self.tal['Koerperbeherrschung'] = ['GE', 'GE', 'KO', talents['TAL_4'] if 'TAL_4' in talents else 0]
-        self.tal['Kraftakt'] = ['KO', 'KK', 'KK', talents['TAL_5'] if 'TAL_5' in talents else 0]
-        self.tal['Reiten'] = ['CH', 'GE', 'KK', talents['TAL_6'] if 'TAL_6' in talents else 0]
-        self.tal['Schwimmen'] = ['GE', 'KO', 'KK', talents['TAL_7'] if 'TAL_7' in talents else 0]
-        self.tal['Selbstbeherrschung'] = ['MU', 'MU', 'KO', talents['TAL_8'] if 'TAL_8' in talents else 0]
-        self.tal['Singen'] = ['KL', 'CH', 'KO', talents['TAL_9'] if 'TAL_9' in talents else 0]
-        self.tal['Sinnesschaerfe'] = ['KL', 'IN', 'IN', talents['TAL_10'] if 'TAL_10' in talents else 0]
-        self.tal['Tanzen'] = ['KL', 'CH', 'GE', talents['TAL_11'] if 'TAL_11' in talents else 0]
-        self.tal['Taschendiebstahl'] = ['MU', 'FF', 'GE', talents['TAL_12'] if 'TAL_12' in talents else 0]
-        self.tal['Verbergen'] = ['MU', 'IN', 'GE', talents['TAL_13'] if 'TAL_13' in talents else 0]
-        self.tal['Zechen'] = ['KL', 'KO', 'KK', talents['TAL_14'] if 'TAL_14' in talents else 0]
+        self.skills = dict()  # Dict to collect all talents
+        self.skills['Fliegen'] = ['MU', 'IN', 'GE', talents['TAL_1'] if 'TAL_1' in talents else 0, 'talent']
+        self.skills['Gaukeleien'] = ['MU', 'CH', 'FF', talents['TAL_2'] if 'TAL_2' in talents else 0, 'talent']
+        self.skills['Klettern'] = ['MU', 'GE', 'KK', talents['TAL_3'] if 'TAL_3' in talents else 0, 'talent']
+        self.skills['Koerperbeherrschung'] = ['GE', 'GE', 'KO', talents['TAL_4'] if 'TAL_4' in talents else 0, 'talent']
+        self.skills['Kraftakt'] = ['KO', 'KK', 'KK', talents['TAL_5'] if 'TAL_5' in talents else 0, 'talent']
+        self.skills['Reiten'] = ['CH', 'GE', 'KK', talents['TAL_6'] if 'TAL_6' in talents else 0, 'talent']
+        self.skills['Schwimmen'] = ['GE', 'KO', 'KK', talents['TAL_7'] if 'TAL_7' in talents else 0, 'talent']
+        self.skills['Selbstbeherrschung'] = ['MU', 'MU', 'KO', talents['TAL_8'] if 'TAL_8' in talents else 0, 'talent']
+        self.skills['Singen'] = ['KL', 'CH', 'KO', talents['TAL_9'] if 'TAL_9' in talents else 0, 'talent']
+        self.skills['Sinnesschaerfe'] = ['KL', 'IN', 'IN', talents['TAL_10'] if 'TAL_10' in talents else 0, 'talent']
+        self.skills['Tanzen'] = ['KL', 'CH', 'GE', talents['TAL_11'] if 'TAL_11' in talents else 0, 'talent']
+        self.skills['Taschendiebstahl'] = ['MU', 'FF', 'GE', talents['TAL_12'] if 'TAL_12' in talents else 0, 'talent']
+        self.skills['Verbergen'] = ['MU', 'IN', 'GE', talents['TAL_13'] if 'TAL_13' in talents else 0, 'talent']
+        self.skills['Zechen'] = ['KL', 'KO', 'KK', talents['TAL_14'] if 'TAL_14' in talents else 0, 'talent']
 
-        self.tal['Bekehren u Ueberzeugen'] = ['MU', 'KL', 'CH', talents['TAL_15'] if 'TAL_15' in talents else 0]
-        self.tal['Betoeren'] = ['MU', 'CH', 'CH', talents['TAL_16'] if 'TAL_16' in talents else 0]
-        self.tal['Einschuechtern'] = ['MU', 'IN', 'CH', talents['TAL_17'] if 'TAL_17' in talents else 0]
-        self.tal['Etikette'] = ['KL', 'IN', 'CH', talents['TAL_18'] if 'TAL_18' in talents else 0]
-        self.tal['Gassenwissen'] = ['KL', 'IN', 'CH', talents['TAL_19'] if 'TAL_19' in talents else 0]
-        self.tal['Menschenkenntnis'] = ['KL', 'IN', 'CH', talents['TAL_20'] if 'TAL_20' in talents else 0]
-        self.tal['Ueberreden'] = ['MU', 'IN', 'CH', talents['TAL_21'] if 'TAL_21' in talents else 0]
-        self.tal['Verkleiden'] = ['IN', 'CH', 'GE', talents['TAL_22'] if 'TAL_22' in talents else 0]
-        self.tal['Willenskraft'] = ['MU', 'IN', 'CH', talents['TAL_23'] if 'TAL_23' in talents else 0]
+        self.skills['Bekehren u Ueberzeugen'] = ['MU', 'KL', 'CH', talents['TAL_15'] if 'TAL_15' in talents else 0, 'talent']
+        self.skills['Betoeren'] = ['MU', 'CH', 'CH', talents['TAL_16'] if 'TAL_16' in talents else 0, 'talent']
+        self.skills['Einschuechtern'] = ['MU', 'IN', 'CH', talents['TAL_17'] if 'TAL_17' in talents else 0, 'talent']
+        self.skills['Etikette'] = ['KL', 'IN', 'CH', talents['TAL_18'] if 'TAL_18' in talents else 0, 'talent']
+        self.skills['Gassenwissen'] = ['KL', 'IN', 'CH', talents['TAL_19'] if 'TAL_19' in talents else 0, 'talent']
+        self.skills['Menschenkenntnis'] = ['KL', 'IN', 'CH', talents['TAL_20'] if 'TAL_20' in talents else 0, 'talent']
+        self.skills['Ueberreden'] = ['MU', 'IN', 'CH', talents['TAL_21'] if 'TAL_21' in talents else 0, 'talent']
+        self.skills['Verkleiden'] = ['IN', 'CH', 'GE', talents['TAL_22'] if 'TAL_22' in talents else 0, 'talent']
+        self.skills['Willenskraft'] = ['MU', 'IN', 'CH', talents['TAL_23'] if 'TAL_23' in talents else 0, 'talent']
 
-        self.tal['Faehrtensuchen'] = ['MU', 'IN', 'GE', talents['TAL_24'] if 'TAL_24' in talents else 0]
-        self.tal['Fesseln'] = ['KL', 'FF', 'KK', talents['TAL_25'] if 'TAL_25' in talents else 0]
-        self.tal['Fischen u Angeln'] = ['FF', 'GE', 'KO', talents['TAL_26'] if 'TAL_26' in talents else 0]
-        self.tal['Orientierung'] = ['KL', 'IN', 'IN', talents['TAL_27'] if 'TAL_27' in talents else 0]
-        self.tal['Pflanzenkunde'] = ['KL', 'FF', 'KO', talents['TAL_28'] if 'TAL_28' in talents else 0]
-        self.tal['Tierkunde'] = ['MU', 'MU', 'CH', talents['TAL_29'] if 'TAL_29' in talents else 0]
-        self.tal['Wildnisleben'] = ['MU', 'GE', 'KO', talents['TAL_30'] if 'TAL_30' in talents else 0]
+        self.skills['Faehrtensuchen'] = ['MU', 'IN', 'GE', talents['TAL_24'] if 'TAL_24' in talents else 0, 'talent']
+        self.skills['Fesseln'] = ['KL', 'FF', 'KK', talents['TAL_25'] if 'TAL_25' in talents else 0, 'talent']
+        self.skills['Fischen u Angeln'] = ['FF', 'GE', 'KO', talents['TAL_26'] if 'TAL_26' in talents else 0, 'talent']
+        self.skills['Orientierung'] = ['KL', 'IN', 'IN', talents['TAL_27'] if 'TAL_27' in talents else 0, 'talent']
+        self.skills['Pflanzenkunde'] = ['KL', 'FF', 'KO', talents['TAL_28'] if 'TAL_28' in talents else 0, 'talent']
+        self.skills['Tierkunde'] = ['MU', 'MU', 'CH', talents['TAL_29'] if 'TAL_29' in talents else 0, 'talent']
+        self.skills['Wildnisleben'] = ['MU', 'GE', 'KO', talents['TAL_30'] if 'TAL_30' in talents else 0, 'talent']
 
-        self.tal['Brett- u Gluecksspiel'] = ['KL', 'KL', 'IN', talents['TAL_31'] if 'TAL_31' in talents else 0]
-        self.tal['Geographie'] = ['KL', 'KL', 'IN', talents['TAL_32'] if 'TAL_32' in talents else 0]
-        self.tal['Geschichtswissen'] = ['KL', 'KL', 'IN', talents['TAL_33'] if 'TAL_33' in talents else 0]
-        self.tal['Goetter u Kulte'] = ['KL', 'KL', 'IN', talents['TAL_34'] if 'TAL_34' in talents else 0]
-        self.tal['Kriegskunst'] = ['MU', 'KL', 'IN', talents['TAL_35'] if 'TAL_35' in talents else 0]
-        self.tal['Magiekunde'] = ['KL', 'KL', 'IN', talents['TAL_36'] if 'TAL_36' in talents else 0]
-        self.tal['Mechanik'] = ['KL', 'KL', 'FF', talents['TAL_37'] if 'TAL_37' in talents else 0]
-        self.tal['Rechnen'] = ['KL', 'KL', 'IN', talents['TAL_38'] if 'TAL_38' in talents else 0]
-        self.tal['Rechtskunde'] = ['KL', 'KL', 'IN', talents['TAL_39'] if 'TAL_39' in talents else 0]
-        self.tal['Sagen u Legenden'] = ['KL', 'KL', 'IN', talents['TAL_40'] if 'TAL_40' in talents else 0]
-        self.tal['Sphaerenkunde'] = ['KL', 'KL', 'IN', talents['TAL_41'] if 'TAL_41' in talents else 0]
-        self.tal['Sternkunde'] = ['KL', 'KL', 'IN', talents['TAL_42'] if 'TAL_42' in talents else 0]
+        self.skills['Brett- u Gluecksspiel'] = ['KL', 'KL', 'IN', talents['TAL_31'] if 'TAL_31' in talents else 0, 'talent']
+        self.skills['Geographie'] = ['KL', 'KL', 'IN', talents['TAL_32'] if 'TAL_32' in talents else 0, 'talent']
+        self.skills['Geschichtswissen'] = ['KL', 'KL', 'IN', talents['TAL_33'] if 'TAL_33' in talents else 0, 'talent']
+        self.skills['Goetter u Kulte'] = ['KL', 'KL', 'IN', talents['TAL_34'] if 'TAL_34' in talents else 0, 'talent']
+        self.skills['Kriegskunst'] = ['MU', 'KL', 'IN', talents['TAL_35'] if 'TAL_35' in talents else 0, 'talent']
+        self.skills['Magiekunde'] = ['KL', 'KL', 'IN', talents['TAL_36'] if 'TAL_36' in talents else 0, 'talent']
+        self.skills['Mechanik'] = ['KL', 'KL', 'FF', talents['TAL_37'] if 'TAL_37' in talents else 0, 'talent']
+        self.skills['Rechnen'] = ['KL', 'KL', 'IN', talents['TAL_38'] if 'TAL_38' in talents else 0, 'talent']
+        self.skills['Rechtskunde'] = ['KL', 'KL', 'IN', talents['TAL_39'] if 'TAL_39' in talents else 0, 'talent']
+        self.skills['Sagen u Legenden'] = ['KL', 'KL', 'IN', talents['TAL_40'] if 'TAL_40' in talents else 0, 'talent']
+        self.skills['Sphaerenkunde'] = ['KL', 'KL', 'IN', talents['TAL_41'] if 'TAL_41' in talents else 0, 'talent']
+        self.skills['Sternkunde'] = ['KL', 'KL', 'IN', talents['TAL_42'] if 'TAL_42' in talents else 0, 'talent']
 
-        self.tal['Alchimie'] = ['MU', 'KL', 'FF', talents['TAL_43'] if 'TAL_43' in talents else 0]
-        self.tal['Boote u Schiffe'] = ['FF', 'GE', 'KK', talents['TAL_44'] if 'TAL_44' in talents else 0]
-        self.tal['Fahrzeuge'] = ['CH', 'FF', 'KO', talents['TAL_45'] if 'TAL_45' in talents else 0]
-        self.tal['Handel'] = ['KL', 'IN', 'CH', talents['TAL_46'] if 'TAL_46' in talents else 0]
-        self.tal['Heilkunde Gift'] = ['MU', 'KL', 'IN', talents['TAL_47'] if 'TAL_47' in talents else 0]
-        self.tal['Heilkunde Krankheiten'] = [' MU', 'IN', 'KO', talents['TAL_48'] if 'TAL_48' in talents else 0]
-        self.tal['Heilkunde Seele'] = ['IN', 'CH', 'KO', talents['TAL_49'] if 'TAL_49' in talents else 0]
-        self.tal['Heilkunde Wunden'] = ['KL', 'FF', 'FF', talents['TAL_50'] if 'TAL_50' in talents else 0]
-        self.tal['Holzbearbeitung'] = ['FF', 'GE', 'KK', talents['TAL_51'] if 'TAL_51' in talents else 0]
-        self.tal['Lebensmittelbearbeitung'] = ['IN', 'FF', 'FF', talents['TAL_52'] if 'TAL_52' in talents else 0]
-        self.tal['Lederbearbeitung'] = ['FF', 'GE', 'KO', talents['TAL_53'] if 'TAL_53' in talents else 0]
-        self.tal['Malen u Zeichnen'] = ['IN', 'FF', 'FF', talents['TAL_54'] if 'TAL_54' in talents else 0]
-        self.tal['Metallbearbeitung'] = ['FF', 'KO', 'KK', talents['TAL_55'] if 'TAL_55' in talents else 0]
-        self.tal['Musizieren'] = ['CH', 'FF', 'KO', talents['TAL_56'] if 'TAL_56' in talents else 0]
-        self.tal['Schloesserknacken'] = ['IN', 'FF', 'FF', talents['TAL_57'] if 'TAL_57' in talents else 0]
-        self.tal['Steinbearbeitung'] = ['FF', 'FF', 'KK', talents['TAL_58'] if 'TAL_58' in talents else 0]
-        self.tal['Stoffbearbeitung'] = ['KL', 'FF', 'FF ', talents['TAL_59'] if 'TAL_59' in talents else 0]
-        self.tal['wichsen'] = ['MU', 'IN', 'KK', 5000]
+        self.skills['Alchimie'] = ['MU', 'KL', 'FF', talents['TAL_43'] if 'TAL_43' in talents else 0, 'talent']
+        self.skills['Boote u Schiffe'] = ['FF', 'GE', 'KK', talents['TAL_44'] if 'TAL_44' in talents else 0, 'talent']
+        self.skills['Fahrzeuge'] = ['CH', 'FF', 'KO', talents['TAL_45'] if 'TAL_45' in talents else 0, 'talent']
+        self.skills['Handel'] = ['KL', 'IN', 'CH', talents['TAL_46'] if 'TAL_46' in talents else 0, 'talent']
+        self.skills['Heilkunde Gift'] = ['MU', 'KL', 'IN', talents['TAL_47'] if 'TAL_47' in talents else 0, 'talent']
+        self.skills['Heilkunde Krankheiten'] = [' MU', 'IN', 'KO', talents['TAL_48'] if 'TAL_48' in talents else 0, 'talent']
+        self.skills['Heilkunde Seele'] = ['IN', 'CH', 'KO', talents['TAL_49'] if 'TAL_49' in talents else 0, 'talent']
+        self.skills['Heilkunde Wunden'] = ['KL', 'FF', 'FF', talents['TAL_50'] if 'TAL_50' in talents else 0, 'talent']
+        self.skills['Holzbearbeitung'] = ['FF', 'GE', 'KK', talents['TAL_51'] if 'TAL_51' in talents else 0, 'talent']
+        self.skills['Lebensmittelbearbeitung'] = ['IN', 'FF', 'FF', talents['TAL_52'] if 'TAL_52' in talents else 0, 'talent']
+        self.skills['Lederbearbeitung'] = ['FF', 'GE', 'KO', talents['TAL_53'] if 'TAL_53' in talents else 0, 'talent']
+        self.skills['Malen u Zeichnen'] = ['IN', 'FF', 'FF', talents['TAL_54'] if 'TAL_54' in talents else 0, 'talent']
+        self.skills['Metallbearbeitung'] = ['FF', 'KO', 'KK', talents['TAL_55'] if 'TAL_55' in talents else 0, 'talent']
+        self.skills['Musizieren'] = ['CH', 'FF', 'KO', talents['TAL_56'] if 'TAL_56' in talents else 0, 'talent']
+        self.skills['Schloesserknacken'] = ['IN', 'FF', 'FF', talents['TAL_57'] if 'TAL_57' in talents else 0, 'talent']
+        self.skills['Steinbearbeitung'] = ['FF', 'FF', 'KK', talents['TAL_58'] if 'TAL_58' in talents else 0, 'talent']
+        self.skills['Stoffbearbeitung'] = ['KL', 'FF', 'FF ', talents['TAL_59'] if 'TAL_59' in talents else 0, 'talent']
+        self.skills['wichsen'] = ['MU', 'IN', 'KK', 5000, 'talent']
+
+        # Magic
+        spells = h_data['spells']
+        if len(spells) > 0:
+            self.AE_max = 20 + self.leiteigenschaft[1]
+            self.AE = self.AE_max
+            print(f'{self.name} has {self.AE} of {self.AE_max} AE')
+            if 'SPELL_367' in spells: self.skills['Schelmenkleister'] = ['KL', 'IN', 'GE', spells['SPELL_367'], 'magic', 8]
+            #######################
+            # ADD MORE MAGIC HERE #
+            #######################
+        else:
+            print(f'{self.name} does not know any magic.')
+
+        # Liturgies
+        liturgies = h_data['liturgies']
+        if len(liturgies) > 0:
+            print('liturgies not implemented')
+            ###########################
+            # ADD MORE liturgies HERE #
+            ###########################
+        else:
+            print(f'{self.name} does not know any liturgies.')
 
         if show_values:
-            print('These are ' + self.name + "'s basic atrributes:")
-            print('=======================')
-
-            for att in self.attr:
-                print(att + ': ' + str(self.attr[att]))
-            print('=======================')
-            print('These are ' + self.name + "'s derived atrributes:")
-            print(f'LP: {self.LP_max}')
             print('=======================')
             print(f"These are {self.name}'s talents:")
             print('=======================')
-            print(self.tal)
-            print('=======================')
+            print(self.skills)
+        print('=======================')
 
         # Get everything that can be probed on
         self.possible_probes = list()
         # Talents
-        for key in self.tal.keys():
+        for key in self.skills.keys():
             self.possible_probes.append(key)
         # Attributes
         for key in self.attr.keys():
             self.possible_probes.append(key)
         self.possible_probes.append('take_hit')
         self.possible_probes.append('give_hit')
+
+    def change_LP(self, value):
+        self.LP = self.LP + value
+
+    def change_AE(self, value):
+        self.AE = self.AE + value
+        print(f'AE has changed to {self.AE}')
 
     def perform_attr_probe(self, attr: str, mod: int = 0):
         print(f"The mighty {self.name} has incredible {self.attr[attr]} points in {attr}," +
@@ -208,10 +247,10 @@ class Hero:
 
         self.logger.info(f'attr_probe;{self.name};{attr};{self.attr[attr]};{mod};{roll};{res};{passed};{meist};{patz}')
 
-    def talent_probe(self, talent: str, mod: int = 0):
-        """Method to perform a talent probe
+    def skill_probe(self, skill: str, mod: int = 0):
+        """Method to perform a skill probe
 
-        talent -- name of talent to probe
+        skill -- name of talent, magic, or liturgie to probe
         mod -- modifier on probe
 
         """
@@ -222,10 +261,10 @@ class Hero:
         meister = False
         mega_meister = False
 
-        points_left = self.tal[talent][3]  # Get number of talent points
+        points_left = self.skills[skill][3]  # Get number of skill points
 
         print('=======================')
-        print(f'The mighty {self.name} has {points_left} talent points when he tries to {talent}.')
+        print(f'The mighty {self.name} has {points_left} skill points when he tries to {skill}.')
         if mod != 0:
             print(f'Probe modified by {mod}.')
             if mod > 0:
@@ -238,9 +277,9 @@ class Hero:
         rolls = [randint(1, 20), randint(1, 20), randint(1, 20)]
         print('Die rolls:')
 
-        print(self.tal[talent][0] + ': ' + str(rolls[0]) + ' (' + str(self.attr[self.tal[talent][0]]) + str_mod + ')')
-        print(self.tal[talent][1] + ': ' + str(rolls[1]) + ' (' + str(self.attr[self.tal[talent][1]]) + str_mod + ')')
-        print(self.tal[talent][2] + ': ' + str(rolls[2]) + ' (' + str(self.attr[self.tal[talent][2]]) + str_mod + ')')
+        print(self.skills[skill][0] + ': ' + str(rolls[0]) + ' (' + str(self.attr[self.skills[skill][0]]) + str_mod + ')')
+        print(self.skills[skill][1] + ': ' + str(rolls[1]) + ' (' + str(self.attr[self.skills[skill][1]]) + str_mod + ')')
+        print(self.skills[skill][2] + ': ' + str(rolls[2]) + ' (' + str(self.attr[self.skills[skill][2]]) + str_mod + ')')
 
         if rolls.count(20) >= 2:
             patz = True
@@ -251,9 +290,9 @@ class Hero:
             if rolls.count(1) == 3:
                 mega_meister = True
 
-        res1 = self.attr[self.tal[talent][0]] - rolls[0] + mod
-        res2 = self.attr[self.tal[talent][1]] - rolls[1] + mod
-        res3 = self.attr[self.tal[talent][2]] - rolls[2] + mod
+        res1 = self.attr[self.skills[skill][0]] - rolls[0] + mod
+        res2 = self.attr[self.skills[skill][1]] - rolls[1] + mod
+        res3 = self.attr[self.skills[skill][2]] - rolls[2] + mod
 
         # Check single rolls
         if res1 < 0:
@@ -291,8 +330,13 @@ class Hero:
         elif mega_patz:
             print(f'{self.name} is an gigantic idiot and mega patzed.')
 
-        self.logger.info(f'tal_probe;{self.name};{talent};{self.tal[talent]};{mod};{rolls};{res1};{res2};'
-                         f'{res3};{points_left};{passed};{meister};{patz};{mega_meister};{mega_patz}')
+        if self.skills[skill][4] == 'talent':
+            self.logger.info(f'tal_probe;{self.name};{skill};{self.skills[skill]};{mod};{rolls};{res1};{res2};'
+                             f'{res3};{points_left};{passed};{meister};{patz};{mega_meister};{mega_patz}')
+        elif self.skills[skill][4] == 'magic':
+            self.change_AE(-self.skills[skill][5])
+            self.logger.info(f'mag_probe;{self.name};{skill};{self.skills[skill]};{mod};{rolls};{res1};{res2};'
+                             f'{res3};{points_left};{passed};{meister};{patz};{mega_meister};{mega_patz}')
 
     def export(self, mode: str = "object"):
         """Method to export the hero either in JSON for Optolith or as an pickled object.
@@ -303,7 +347,7 @@ class Hero:
     def take_a_hit(self):
         enemy = input(f'Aua! What has hit {self.name}? ')
         damage = int(input(f'How much damage did {enemy} inflict? '))
-        self.LP = self.LP - damage
+        self.change_LP(-damage)
         source = input(f'How did {enemy} hit {self.name}? ')
         source_class = input(f'What is the general class of {source}? ')
         print(f'OMG! {self.name} was hit by a {enemy} and suffered {damage} damge from this brutal attack with a '
@@ -315,7 +359,7 @@ class Hero:
         damage = int(input(f'How much damage did {self.name} inflict on {enemy}? '))
         source = input(f'How did {self.name} hit {enemy}? ')
         source_class = input(f'What is the general class of {source}? ')
-        print(f'N1! A {enemy} was hit by a {self.name} and suffered {damage} damge from this brutal attack with a '
+        print(f'N1! A {enemy} was hit by a {self.name} and suffered {damage} damage from this brutal attack with a '
               f' {source} ({source_class}).')
         self.logger.info(f'hit_given;{self.name};{enemy};{damage};{source};{source_class}')
 
@@ -330,8 +374,8 @@ class Hero:
             return False
         # Perform probe
         else:
-            if user_action in self.tal:
-                self.talent_probe(user_action, modifier)
+            if user_action in self.skills:
+                self.skill_probe(user_action, modifier)
             elif user_action in self.attr:
                 self.perform_attr_probe(user_action, modifier)
             elif user_action == 'take_hit':
