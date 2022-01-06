@@ -509,7 +509,12 @@ def run(group: List[Hero]):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='probe.log',
+    if debug_log:
+        log_name = 'test.log'
+    elif not debug_log:
+        log_name = 'probe.log'
+
+    logging.basicConfig(filename=log_name,
                         # encoding='utf-8',
                         format='%(asctime)s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S;', level=logging.DEBUG)
