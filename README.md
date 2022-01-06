@@ -2,7 +2,7 @@
 
 A little tool for The Dark Eye 5th Edition ([Das Schwarze Auge 5](https://ulisses-spiele.de/spielsysteme/dsa5/)) to load .json from [Optolith](https://github.com/elyukai/optolith-client) character generation and easily perform talent probes. For the Meister: It can handle more than one hero/NPC simultaneously!
 
-### Implemented features
+## Implemented features
 - Talent probes with modifier
 - Attribute probes with modifier
 - Logging of probes and their results
