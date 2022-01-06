@@ -3,6 +3,7 @@
 
 import os
 import json
+import logging
 from random import randint
 from pathlib import Path
 import warnings
@@ -18,6 +19,7 @@ if debug:
     print(os.listdir())
     print(os.getcwd())
 
+
 class Hero:
     """ Class to create an Hero object from heros .json file
 
@@ -26,12 +28,13 @@ class Hero:
 
     """
 
-    def __init__(self, file, show_values=False):
+    def __init__(self, file, logger, show_values=False):
 
         # Prepare and load hero's .json file
         f = open(file)
         h_data = json.load(f)
         self.name = h_data['name']
+        self.logger = logger
         print('=======================')
         print('The great hero called ' + self.name + ' is being summoned into the working memory.')
         print('=======================')
@@ -55,6 +58,7 @@ class Hero:
         # Get race and compute derived stats
         self.ap = h_data['ap']
         self.LP_max = 2 * self.attr['KO']
+
         self.race = h_data['r']
         if self.race == 'R_1':
             self.race == 'Human'
@@ -68,6 +72,7 @@ class Hero:
         elif self.race == 'R_4':
             self.race == 'Dwarf'
             self.LP_max = self.LP_max + 8
+        self.LP = self.LP_max
 
         # Talents
         talents = h_data['talents']  # Get data from .json file
@@ -80,61 +85,61 @@ class Hero:
         self.tal['Reiten'] = ['CH', 'GE', 'KK', talents['TAL_6'] if 'TAL_6' in talents else 0]
         self.tal['Schwimmen'] = ['GE', 'KO', 'KK', talents['TAL_7'] if 'TAL_7' in talents else 0]
         self.tal['Selbstbeherrschung'] = ['MU', 'MU', 'KO', talents['TAL_8'] if 'TAL_8' in talents else 0]
-        self.tal['Singen'] = ['KL', 'CH', 'KO', talents['TAL_1'] if 'TAL_1' in talents else 0]
-        self.tal['Sinnesschaerfe'] = ['KL', 'IN', 'IN', talents['TAL_9'] if 'TAL_9' in talents else 0]
-        self.tal['Tanzen'] = ['KL', 'CH', 'GE', talents['TAL_10'] if 'TAL_10' in talents else 0]
-        self.tal['Taschendiebstahl'] = ['MU', 'FF', 'GE', talents['TAL_1'] if 'TAL_1' in talents else 0]
-        self.tal['Verbergen'] = ['MU', 'IN', 'GE', talents['TAL_11'] if 'TAL_11' in talents else 0]
-        self.tal['Zechen'] = ['KL', 'KO', 'KK', talents['TAL_12'] if 'TAL_12' in talents else 0]
+        self.tal['Singen'] = ['KL', 'CH', 'KO', talents['TAL_9'] if 'TAL_9' in talents else 0]
+        self.tal['Sinnesschaerfe'] = ['KL', 'IN', 'IN', talents['TAL_10'] if 'TAL_10' in talents else 0]
+        self.tal['Tanzen'] = ['KL', 'CH', 'GE', talents['TAL_11'] if 'TAL_11' in talents else 0]
+        self.tal['Taschendiebstahl'] = ['MU', 'FF', 'GE', talents['TAL_12'] if 'TAL_12' in talents else 0]
+        self.tal['Verbergen'] = ['MU', 'IN', 'GE', talents['TAL_13'] if 'TAL_13' in talents else 0]
+        self.tal['Zechen'] = ['KL', 'KO', 'KK', talents['TAL_14'] if 'TAL_14' in talents else 0]
 
-        self.tal['Bekehren u Ueberzeugen'] = ['MU', 'KL', 'CH', talents['TAL_13'] if 'TAL_13' in talents else 0]
-        self.tal['Betoeren'] = ['MU', 'CH', 'CH', talents['TAL_14'] if 'TAL_14' in talents else 0]
-        self.tal['Einschuechtern'] = ['MU', 'IN', 'CH', talents['TAL_15'] if 'TAL_15' in talents else 0]
-        self.tal['Etikette'] = ['KL', 'IN', 'CH', talents['TAL_16'] if 'TAL_16' in talents else 0]
-        self.tal['Gassenwissen'] = ['KL', 'IN', 'CH', talents['TAL_17'] if 'TAL_17' in talents else 0]
-        self.tal['Menschenkenntnis'] = ['KL', 'IN', 'CH', talents['TAL_18'] if 'TAL_18' in talents else 0]
-        self.tal['Ueberreden'] = ['MU', 'IN', 'CH', talents['TAL_19'] if 'TAL_19' in talents else 0]
-        self.tal['Verkleiden'] = ['IN', 'CH', 'GE', talents['TAL_20'] if 'TAL_20' in talents else 0]
-        self.tal['Willenskraft'] = ['MU', 'IN', 'CH', talents['TAL_21'] if 'TAL_21' in talents else 0]
+        self.tal['Bekehren u Ueberzeugen'] = ['MU', 'KL', 'CH', talents['TAL_15'] if 'TAL_15' in talents else 0]
+        self.tal['Betoeren'] = ['MU', 'CH', 'CH', talents['TAL_16'] if 'TAL_16' in talents else 0]
+        self.tal['Einschuechtern'] = ['MU', 'IN', 'CH', talents['TAL_17'] if 'TAL_15' in talents else 0]
+        self.tal['Etikette'] = ['KL', 'IN', 'CH', talents['TAL_18'] if 'TAL_18' in talents else 0]
+        self.tal['Gassenwissen'] = ['KL', 'IN', 'CH', talents['TAL_19'] if 'TAL_19' in talents else 0]
+        self.tal['Menschenkenntnis'] = ['KL', 'IN', 'CH', talents['TAL_20'] if 'TAL_20' in talents else 0]
+        self.tal['Ueberreden'] = ['MU', 'IN', 'CH', talents['TAL_21'] if 'TAL_21' in talents else 0]
+        self.tal['Verkleiden'] = ['IN', 'CH', 'GE', talents['TAL_22'] if 'TAL_22' in talents else 0]
+        self.tal['Willenskraft'] = ['MU', 'IN', 'CH', talents['TAL_23'] if 'TAL_23' in talents else 0]
 
-        self.tal['Faehrtensuchen'] = ['MU', 'IN', 'GE', talents['TAL_22'] if 'TAL_23' in talents else 0]
-        self.tal['Fesseln'] = ['KL', 'FF', 'KK', talents['TAL_24'] if 'TAL_24' in talents else 0]
-        self.tal['Fischen u Angeln'] = ['FF', 'GE', 'KO', talents['TAL_25'] if 'TAL_25' in talents else 0]
-        self.tal['Orientierung'] = ['KL', 'IN', 'IN', talents['TAL_26'] if 'TAL_26' in talents else 0]
-        self.tal['Pflanzenkunde'] = ['KL', 'FF', 'KO', talents['TAL_27'] if 'TAL_27' in talents else 0]
-        self.tal['Tierkunde'] = ['MU', 'MU', 'CH', talents['TAL_28'] if 'TAL_28' in talents else 0]
-        self.tal['Wildnisleben'] = ['MU', 'GE', 'KO', talents['TAL_29'] if 'TAL_29' in talents else 0]
+        self.tal['Faehrtensuchen'] = ['MU', 'IN', 'GE', talents['TAL_24'] if 'TAL_24' in talents else 0]
+        self.tal['Fesseln'] = ['KL', 'FF', 'KK', talents['TAL_25'] if 'TAL_25' in talents else 0]
+        self.tal['Fischen u Angeln'] = ['FF', 'GE', 'KO', talents['TAL_26'] if 'TAL_26' in talents else 0]
+        self.tal['Orientierung'] = ['KL', 'IN', 'IN', talents['TAL_27'] if 'TAL_27' in talents else 0]
+        self.tal['Pflanzenkunde'] = ['KL', 'FF', 'KO', talents['TAL_28'] if 'TAL_28' in talents else 0]
+        self.tal['Tierkunde'] = ['MU', 'MU', 'CH', talents['TAL_29'] if 'TAL_29' in talents else 0]
+        self.tal['Wildnisleben'] = ['MU', 'GE', 'KO', talents['TAL_30'] if 'TAL_30' in talents else 0]
 
-        self.tal['Brett- u Gluecksspiel'] = ['KL', 'KL', 'IN', talents['TAL_30'] if 'TAL_30' in talents else 0]
-        self.tal['Geographie'] = ['KL', 'KL', 'IN', talents['TAL_31'] if 'TAL_31' in talents else 0]
-        self.tal['Geschichtswissen'] = ['KL', 'KL', 'IN', talents['TAL_32'] if 'TAL_32' in talents else 0]
-        self.tal['Goetter u Kulte'] = ['KL', 'KL', 'IN', talents['TAL_33'] if 'TAL_33' in talents else 0]
-        self.tal['Kriegskunst'] = ['MU', 'KL', 'IN', talents['TAL_34'] if 'TAL_34' in talents else 0]
-        self.tal['Magiekunde'] = ['KL', 'KL', 'IN', talents['TAL_35'] if 'TAL_35' in talents else 0]
-        self.tal['Mechanik'] = ['KL', 'KL', 'FF', talents['TAL_36'] if 'TAL_36' in talents else 0]
-        self.tal['Rechnen'] = ['KL', 'KL', 'IN', talents['TAL_37'] if 'TAL_37' in talents else 0]
-        self.tal['Rechtskunde'] = ['KL', 'KL', 'IN', talents['TAL_37'] if 'TAL_37' in talents else 0]
-        self.tal['Sagen u Legenden'] = ['KL', 'KL', 'IN', talents['TAL_38'] if 'TAL_38' in talents else 0]
-        self.tal['Sphaerenkunde'] = ['KL', 'KL', 'IN', talents['TAL_39'] if 'TAL_39' in talents else 0]
-        self.tal['Sternkunde'] = ['KL', 'KL', 'IN', talents['TAL_40'] if 'TAL_40' in talents else 0]
+        self.tal['Brett- u Gluecksspiel'] = ['KL', 'KL', 'IN', talents['TAL_31'] if 'TAL_31' in talents else 0]
+        self.tal['Geographie'] = ['KL', 'KL', 'IN', talents['TAL_32'] if 'TAL_32' in talents else 0]
+        self.tal['Geschichtswissen'] = ['KL', 'KL', 'IN', talents['TAL_33'] if 'TAL_33' in talents else 0]
+        self.tal['Goetter u Kulte'] = ['KL', 'KL', 'IN', talents['TAL_34'] if 'TAL_34' in talents else 0]
+        self.tal['Kriegskunst'] = ['MU', 'KL', 'IN', talents['TAL_35'] if 'TAL_35' in talents else 0]
+        self.tal['Magiekunde'] = ['KL', 'KL', 'IN', talents['TAL_36'] if 'TAL_36' in talents else 0]
+        self.tal['Mechanik'] = ['KL', 'KL', 'FF', talents['TAL_37'] if 'TAL_37' in talents else 0]
+        self.tal['Rechnen'] = ['KL', 'KL', 'IN', talents['TAL_38'] if 'TAL_38' in talents else 0]
+        self.tal['Rechtskunde'] = ['KL', 'KL', 'IN', talents['TAL_39'] if 'TAL_39' in talents else 0]
+        self.tal['Sagen u Legenden'] = ['KL', 'KL', 'IN', talents['TAL_40'] if 'TAL_40' in talents else 0]
+        self.tal['Sphaerenkunde'] = ['KL', 'KL', 'IN', talents['TAL_41'] if 'TAL_41' in talents else 0]
+        self.tal['Sternkunde'] = ['KL', 'KL', 'IN', talents['TAL_42'] if 'TAL_42' in talents else 0]
 
-        self.tal['Alchimie'] = ['MU', 'KL', 'FF', talents['TAL_41'] if 'TAL_41' in talents else 0]
-        self.tal['Boote u Schiffe'] = ['FF', 'GE', 'KK', talents['TAL_42'] if 'TAL_42' in talents else 0]
-        self.tal['Fahrzeuge'] = ['CH', 'FF', 'KO', talents['TAL_43'] if 'TAL_43' in talents else 0]
-        self.tal['Handel'] = ['KL', 'IN', 'CH', talents['TAL_44'] if 'TAL_44' in talents else 0]
-        self.tal['Heilkunde Gift'] = ['MU', 'KL', 'IN', talents['TAL_45'] if 'TAL_45' in talents else 0]
-        self.tal['Heilkunde Krankheiten'] = [' MU', 'IN', 'KO', talents['TAL_46'] if 'TAL_46' in talents else 0]
-        self.tal['Heilkunde Seele'] = ['IN', 'CH', 'KO', talents['TAL_47'] if 'TAL_47' in talents else 0]
-        self.tal['Heilkunde Wunden'] = ['KL', 'FF', 'FF', talents['TAL_48'] if 'TAL_48' in talents else 0]
-        self.tal['Holzbearbeitung'] = ['FF', 'GE', 'KK', talents['TAL_49'] if 'TAL_49' in talents else 0]
-        self.tal['Lebensmittelbearbeitung'] = ['IN', 'FF', 'FF', talents['TAL_50'] if 'TAL_50' in talents else 0]
-        self.tal['Lederbearbeitung'] = ['FF', 'GE', 'KO', talents['TAL_51'] if 'TAL_51' in talents else 0]
-        self.tal['Malen u Zeichnen'] = ['IN', 'FF', 'FF', talents['TAL_52'] if 'TAL_52' in talents else 0]
-        self.tal['Metallbearbeitung'] = ['FF', 'KO', 'KK', talents['TAL_53'] if 'TAL_53' in talents else 0]
-        self.tal['Musizieren'] = ['CH', 'FF', 'KO', talents['TAL_54'] if 'TAL_54' in talents else 0]
-        self.tal['Schloesserknacken'] = ['IN', 'FF', 'FF', talents['TAL_55'] if 'TAL_55' in talents else 0]
-        self.tal['Steinbearbeitung'] = ['FF', 'FF', 'KK', talents['TAL_56'] if 'TAL_56' in talents else 0]
-        self.tal['Stoffbearbeitung'] = ['KL', 'FF', 'FF ', talents['TAL_57'] if 'TAL_57' in talents else 0]
+        self.tal['Alchimie'] = ['MU', 'KL', 'FF', talents['TAL_43'] if 'TAL_43' in talents else 0]
+        self.tal['Boote u Schiffe'] = ['FF', 'GE', 'KK', talents['TAL_44'] if 'TAL_44' in talents else 0]
+        self.tal['Fahrzeuge'] = ['CH', 'FF', 'KO', talents['TAL_45'] if 'TAL_45' in talents else 0]
+        self.tal['Handel'] = ['KL', 'IN', 'CH', talents['TAL_46'] if 'TAL_46' in talents else 0]
+        self.tal['Heilkunde Gift'] = ['MU', 'KL', 'IN', talents['TAL_47'] if 'TAL_47' in talents else 0]
+        self.tal['Heilkunde Krankheiten'] = [' MU', 'IN', 'KO', talents['TAL_48'] if 'TAL_48' in talents else 0]
+        self.tal['Heilkunde Seele'] = ['IN', 'CH', 'KO', talents['TAL_49'] if 'TAL_49' in talents else 0]
+        self.tal['Heilkunde Wunden'] = ['KL', 'FF', 'FF', talents['TAL_50'] if 'TAL_50' in talents else 0]
+        self.tal['Holzbearbeitung'] = ['FF', 'GE', 'KK', talents['TAL_51'] if 'TAL_51' in talents else 0]
+        self.tal['Lebensmittelbearbeitung'] = ['IN', 'FF', 'FF', talents['TAL_52'] if 'TAL_52' in talents else 0]
+        self.tal['Lederbearbeitung'] = ['FF', 'GE', 'KO', talents['TAL_53'] if 'TAL_53' in talents else 0]
+        self.tal['Malen u Zeichnen'] = ['IN', 'FF', 'FF', talents['TAL_54'] if 'TAL_54' in talents else 0]
+        self.tal['Metallbearbeitung'] = ['FF', 'KO', 'KK', talents['TAL_55'] if 'TAL_55' in talents else 0]
+        self.tal['Musizieren'] = ['CH', 'FF', 'KO', talents['TAL_56'] if 'TAL_56' in talents else 0]
+        self.tal['Schloesserknacken'] = ['IN', 'FF', 'FF', talents['TAL_57'] if 'TAL_57' in talents else 0]
+        self.tal['Steinbearbeitung'] = ['FF', 'FF', 'KK', talents['TAL_58'] if 'TAL_58' in talents else 0]
+        self.tal['Stoffbearbeitung'] = ['KL', 'FF', 'FF ', talents['TAL_59'] if 'TAL_59' in talents else 0]
         self.tal['wichsen'] = ['MU', 'IN', 'KK', 5000]
 
         if show_values:
@@ -160,34 +165,47 @@ class Hero:
         # Attributes
         for key in self.attr.keys():
             self.possible_probes.append(key)
+        self.possible_probes.append('take_hit')
+        self.possible_probes.append('give_hit')
 
     def perform_attr_probe(self, attr: str, mod: int = 0):
         print(f"The mighty {self.name} has incredible {self.attr[attr]} points in {attr}," +
               f"the modifier for this probe is {mod}")
+        meist = False
+        patz = False
+
         roll = randint(1, 20)
         res = self.attr[attr] - roll + mod
         print(f'The die shows a {roll}')
+
         if res >= 0 and roll != 20:
             print(f"{self.name} has passed")
+            passed = True
             if roll == 1:
                 print('Will it be meisterlich?')
                 roll2 = randint(1, 20)
                 res2 = self.attr[attr] - roll2 + mod
                 if res >= 0:
                     print('Yes!')
+                    meist = True
                 else:
                     print('No :(')
         elif roll != 20:
+            passed = False
             print(f"{self.name} has failed")
-
-        if roll == 20:
+        elif roll == 20:
             print(f"{self.name} has failed, but will it be a complete disaster?")
             roll2 = randint(1, 20)
             res2 = self.attr[attr] - roll2 + mod
             if res <= 0:
                 print("Yes....")
+                patz = True
             else:
                 print("No, thanks to the Twelve")
+        else:
+            print('This should never happen :(')
+
+        self.logger.info(f'attr_probe;{self.name};{attr};{self.attr[attr]};{mod};{roll};{res};{passed};{meist};{patz}')
 
     def talent_probe(self, talent: str, mod: int = 0):
         """Method to perform a talent probe
@@ -197,7 +215,7 @@ class Hero:
 
         """
 
-        # Boolean whether something critical occured
+        # Booleans whether something critical occured
         patz = False
         mega_patz = False
         meister = False
@@ -248,15 +266,19 @@ class Hero:
         # Fail message
         if not patz and not mega_patz and points_left < 0:
             print(f'{self.name} failed with {points_left}.')
+            passed = False
         # Success messages
         elif not patz and not mega_patz and points_left >= 0:
             print(f'{self.name} passed with {points_left}.')
+            passed = True
         elif meister and not mega_meister and points_left < 0:
             print(f'Though {self.name} should have failed with {points_left} our hero was struck by the Gods' +
                   'and passed meisterlich.')
+            passed = True
         elif mega_meister and points_left < 0:
             print('Though ' + self.name + 'should have failed with ' + str(points_left) +
                   ', our hero was struck by the Gods and passed mega meisterlich.')
+            passed = True
 
         # Extra messages for meisterlich and patzing
         if meister and not mega_meister:
@@ -268,11 +290,33 @@ class Hero:
         elif mega_patz:
             print(f'{self.name} is an gigantic idiot and mega patzed.')
 
+        self.logger.info(f'tal_probe;{self.name};{talent};{self.tal[talent]};{mod};{rolls};{res1};{res2};'
+                         f'{res3};{points_left};{passed};{meister};{patz};{mega_meister};{mega_patz}')
+
     def export(self, mode: str = "object"):
         """Method to export the hero either in JSON for Optolith or as an pickled object.
         The idea is that the history of Proben can be tracked and analysed so that the corresponding
         talents or attributes can be leveled ;-)
         """
+
+    def take_a_hit(self):
+        enemy = input(f'Aua! What has hit {self.name}? ')
+        damage = int(input(f'How much damage did {enemy} inflict? '))
+        self.LP = self.LP - damage
+        source = input(f'How did {enemy} hit {self.name}? ')
+        source_class = input(f'What is the general class of {source}? ')
+        print(f'OMG! {self.name} was hit by a {enemy} and suffered {damage} damge from this brutal attack with a '
+              f'{source} ({source_class}).')
+        self.logger.info(f'hit_taken;{self.name};{enemy};{damage};{source};{source_class}')
+
+    def give_a_hit(self):
+        enemy = input(f'SCHWUSSS! What did {self.name} hit? ')
+        damage = int(input(f'How much damage did {self.name} inflict on {enemy}? '))
+        source = input(f'How did {self.name} hit {enemy}? ')
+        source_class = input(f'What is the general class of {source}? ')
+        print(f'N1! A {enemy} was hit by a {self.name} and suffered {damage} damge from this brutal attack with a '
+              f' {source} ({source_class}).')
+        self.logger.info(f'hit_given;{self.name};{enemy};{damage};{source};{source_class}')
 
     def perform_action(self, user_action: str, modifier: int = 0) -> bool:
         # Quitting program
@@ -283,13 +327,16 @@ class Hero:
                 for h in names:
                     print(f'{h} has left the building.')
             return False
-
         # Perform probe
         else:
             if user_action in self.tal:
                 self.talent_probe(user_action, modifier)
             elif user_action in self.attr:
                 self.perform_attr_probe(user_action, modifier)
+            elif user_action == 'take_hit':
+                self.take_a_hit()
+            elif user_action == 'give_hit':
+                self.give_a_hit()
             else:
                 raise ValueError('Talent ' + user_action + " not found, enter 'feddich' to quit")
             return True
@@ -338,9 +385,14 @@ def run(group: List[Hero]):
             playing = Digga.perform_action(user_action, modifier)
         else:
             playing = False
+    logger.info('Probemaker is feddich')
 
 
 if __name__ == "__main__":
+    logging.basicConfig(filename='probe.log', encoding='utf-8', format='%(asctime)s %(message)s',
+                        datefmt='%Y-%m-%d %H:%M:%S;', level=logging.DEBUG)
+    logger = logging.getLogger("Basic Logger")
+    logger.info('Probemaker started')
 
     hfiles = dict()  # Dict for heros' .json files
     group = dict()  # Dict to collect all Hero objects
@@ -357,8 +409,9 @@ if __name__ == "__main__":
 
     # Create Hero objects
     for h in hfiles:
-        Digga = Hero(hfiles[h], show_values)
+        Digga = Hero(hfiles[h], logger, show_values)
         names.append(Digga.name)
         group[Digga.name] = Digga
+        logger.info(f'{Digga.name} loaded')
 
     run(group)
