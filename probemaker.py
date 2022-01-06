@@ -65,6 +65,7 @@ class Hero:
 
         # Get race and compute derived stats
         self.ap = h_data['ap']
+        self.dead = False
         self.LP_max = 2 * self.attr['KO']
 
         self.race = h_data['r']
@@ -93,9 +94,10 @@ class Hero:
         print(f'{self.name} has {self.LP} of {self.LP_max} LP')
 
         # Wundschwellen
-        print(self.LP_max/4)
-        print("===================")
-        aa
+        self.wundschwelle = (self.LP_max/4)
+        self.wundschwelle = [self.wundschwelle*3, self.wundschwelle*2, self.wundschwelle]
+        self.wounds = 0
+        print(f'{self.name}`s Wundschwellen: {self.wundschwelle}')
 
         # Talents
         talents = h_data['talents']  # Get data from .json file
@@ -235,6 +237,24 @@ class Hero:
         self.LP = min(self.LP + value, self.LP_max)
         print(f'LP has changed from {old} to {self.LP}')
         self.logger.info(f'reg_event;change_LP;{self.name};{old};{self.LP}')
+
+        # Check if wounded( in pain)
+        if self.LP > self.wundschwelle[0]:
+            self.wounds = 0
+        elif self.LP <= self.wundschwelle[0] and self.LP > self.wundschwelle[1]:
+            self.wounds = 1
+        elif self.LP <= self.wundschwelle[1] and self.LP > self.wundschwelle[2]:
+            self.wounds = 2
+        elif 0 < self.LP <= self.wundschwelle[2]:
+            self.wounds = 3
+        elif self.LP <= 0:
+            print('YOU ARE DEAD')
+            self.dead = True
+            self.logger.info(f'{self.name};DEAD')
+        if self.wounds > 0:
+            print(f'{self.name}: LEVEL OF PAIN: {self.wounds} (-{self.wounds} AT/PA))')
+        else:
+            print(f'{self.name}: HAS NO PAIN')
 
     def perform_attr_probe(self, attr: str, mod: int = 0):
         print(f"The mighty {self.name} has incredible {self.attr[attr]} points in {attr}," +
@@ -378,8 +398,12 @@ class Hero:
         self.change_LP(-damage)
         source = input(f'How did {enemy} hit {self.name}? ')
         source_class = input(f'What is the general class of {source}? ')
-        print(f'OMG! {self.name} was hit by a {enemy} and suffered {damage} damge from this brutal attack with a '
-              f'{source} ({source_class}).')
+        print('===========================================================================')
+        print('===========================================================================')
+        print(f'OMG! {self.name} was hit by a {enemy} and suffered {damage} damage from this brutal attack with a '
+              f'{source} in the style of {source_class} and with {self.LP} LP left suffers {self.wounds} LEVELS OF PAIN (-{self.wounds} AT/PA).')
+        print('===========================================================================')
+        print('===========================================================================')
         self.logger.info(f'hit_taken;{self.name};{enemy};{damage};{source};{source_class}')
 
     def give_a_hit(self):
