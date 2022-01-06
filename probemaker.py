@@ -166,6 +166,7 @@ class Hero:
         for key in self.attr.keys():
             self.possible_probes.append(key)
         self.possible_probes.append('take_hit')
+        self.possible_probes.append('give_hit')
 
     def perform_attr_probe(self, attr: str, mod: int = 0):
         print(f"The mighty {self.name} has incredible {self.attr[attr]} points in {attr}," +
@@ -306,6 +307,14 @@ class Hero:
         print(f'OMG! {self.name} was hit by a {enemy} and suffered {damage} damge from this brutal attack with a {source} ({source_class}).')
         self.logger.info(f'hit_taken,{self.name},{enemy},{damage},{source},{source_class}')
 
+    def give_a_hit(self):
+        enemy = input(f'SCHWUSSS! What did {self.name} hit? ')
+        damage = int(input(f'How much damage did {self.name} inflict on {enemy}? '))
+        source = input(f'How did {self.name} hit {enemy}? ')
+        source_class = input(f'What is the general class of {source}? ')
+        print(f'N1! A {enemy} was hit by a {self.name} and suffered {damage} damge from this brutal attack with a {source} ({source_class}).')
+        self.logger.info(f'hit_given,{self.name},{enemy},{damage},{source},{source_class}')
+
     def perform_action(self, user_action: str, modifier: int = 0) -> bool:
         # Quitting program
         if user_action == 'feddich':
@@ -315,14 +324,16 @@ class Hero:
                 for h in names:
                     print(f'{h} has left the building.')
             return False
-        elif user_action == 'take_hit':
-            self.take_a_hit()
         # Perform probe
         else:
             if user_action in self.tal:
                 self.talent_probe(user_action, modifier)
             elif user_action in self.attr:
                 self.perform_attr_probe(user_action, modifier)
+            elif user_action == 'take_hit':
+                self.take_a_hit()
+            elif user_action == 'give_hit':
+                self.give_a_hit()
             else:
                 raise ValueError('Talent ' + user_action + " not found, enter 'feddich' to quit")
             return True
