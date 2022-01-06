@@ -55,32 +55,41 @@ class Hero:
         self.attr['KO'] = attr_dict['ATTR_7'] if 'ATTR_7' in attr_dict else 8
         self.attr['KK'] = attr_dict['ATTR_8'] if 'ATTR_8' in attr_dict else 8
 
+        print('These are ' + self.name + "'s basic atrributes:")
+        print('=======================')
+
+        for att in self.attr:
+            print(att + ': ' + str(self.attr[att]))
+        print('=======================')
+
         # Get race and compute derived stats
         self.ap = h_data['ap']
         self.LP_max = 2 * self.attr['KO']
 
         self.race = h_data['r']
         if self.race == 'R_1':
-            self.race == 'Human'
+            self.race = 'Human'
             self.LP_max = self.LP_max + 5
         elif self.race == 'R_2':
-            self.race == 'Halfelf'
+            self.race = 'Halfelf'
             self.LP_max = self.LP_max + 5
         elif self.race == 'R_3':
-            self.race == 'Elf'
+            self.race = 'Elf'
             self.LP_max = self.LP_max + 2
         elif self.race == 'R_4':
-            self.race == 'Dwarf'
+            self.race = 'Dwarf'
             self.LP_max = self.LP_max + 8
-        self.LP = self.LP_max
-
-        print(f'{self.name} is a {self.race}!')
+        print(f'{self.name} is a cute {self.race}!')
 
         # Get leiteigenschaft
         LEG = h_data['attr']['attributeAdjustmentSelected']
         attr_dict = {'ATTR_1': 'MU', 'ATTR_2': 'KL', 'ATTR_3': 'IN', 'ATTR_4': 'CH', 'ATTR_5': 'FF',
                      'ATTR_6': 'GE', 'ATTR_7': 'KO', 'ATTR_8': 'KK'}
         self.leiteigenschaft = [attr_dict[LEG], self.attr[attr_dict[LEG]]]
+        print(f'{self.name}`s leiteigenschaft is {self.leiteigenschaft[0]}.')
+
+        self.LP = self.LP_max
+        print(f'{self.name} has {self.LP} of {self.LP_max} LP')
 
         # Talents
         talents = h_data['talents']  # Get data from .json file
@@ -155,7 +164,8 @@ class Hero:
         if len(spells) > 0:
             self.AE_max = 20 + self.leiteigenschaft[1]
             self.AE = self.AE_max
-            self.skills['Schelmenkleister'] = ['KL', 'IN', 'GE', spells['SPELL_367'] if 'SPELL_367' in spells else -Inf, 'magic', 8]
+            print(f'{self.name} has {self.AE} of {self.AE_max} AE')
+            if 'SPELL_367' in spells: self.skills['Schelmenkleister'] = ['KL', 'IN', 'GE', spells['SPELL_367'], 'magic', 8]
             #######################
             # ADD MORE MAGIC HERE #
             #######################
@@ -173,19 +183,11 @@ class Hero:
             print(f'{self.name} does not know any liturgies.')
 
         if show_values:
-            print('These are ' + self.name + "'s basic atrributes:")
-            print('=======================')
-
-            for att in self.attr:
-                print(att + ': ' + str(self.attr[att]))
-            print('=======================')
-            print('These are ' + self.name + "'s derived atrributes:")
-            print(f'LP: {self.LP_max}')
             print('=======================')
             print(f"These are {self.name}'s talents:")
             print('=======================')
             print(self.skills)
-            print('=======================')
+        print('=======================')
 
         # Get everything that can be probed on
         self.possible_probes = list()
@@ -197,6 +199,13 @@ class Hero:
             self.possible_probes.append(key)
         self.possible_probes.append('take_hit')
         self.possible_probes.append('give_hit')
+
+    def change_LP(self, value):
+        self.LP = self.LP + value
+
+    def change_AE(self, value):
+        self.AE = self.AE + value
+        print(f'AE has changed to {self.AE}')
 
     def perform_attr_probe(self, attr: str, mod: int = 0):
         print(f"The mighty {self.name} has incredible {self.attr[attr]} points in {attr}," +
@@ -324,6 +333,7 @@ class Hero:
             self.logger.info(f'tal_probe;{self.name};{skill};{self.skills[skill]};{mod};{rolls};{res1};{res2};'
                              f'{res3};{points_left};{passed};{meister};{patz};{mega_meister};{mega_patz}')
         elif self.skills[skill][4] == 'magic':
+            self.change_AE(-self.skills[skill][5])
             self.logger.info(f'mag_probe;{self.name};{skill};{self.skills[skill]};{mod};{rolls};{res1};{res2};'
                              f'{res3};{points_left};{passed};{meister};{patz};{mega_meister};{mega_patz}')
 
@@ -336,7 +346,7 @@ class Hero:
     def take_a_hit(self):
         enemy = input(f'Aua! What has hit {self.name}? ')
         damage = int(input(f'How much damage did {enemy} inflict? '))
-        self.LP = self.LP - damage
+        self.change_LP(-damage)
         source = input(f'How did {enemy} hit {self.name}? ')
         source_class = input(f'What is the general class of {source}? ')
         print(f'OMG! {self.name} was hit by a {enemy} and suffered {damage} damge from this brutal attack with a '
@@ -348,7 +358,7 @@ class Hero:
         damage = int(input(f'How much damage did {self.name} inflict on {enemy}? '))
         source = input(f'How did {self.name} hit {enemy}? ')
         source_class = input(f'What is the general class of {source}? ')
-        print(f'N1! A {enemy} was hit by a {self.name} and suffered {damage} damge from this brutal attack with a '
+        print(f'N1! A {enemy} was hit by a {self.name} and suffered {damage} damage from this brutal attack with a '
               f' {source} ({source_class}).')
         self.logger.info(f'hit_given;{self.name};{enemy};{damage};{source};{source_class}')
 
