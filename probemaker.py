@@ -58,6 +58,7 @@ class Hero:
         # Get race and compute derived stats
         self.ap = h_data['ap']
         self.LP_max = 2 * self.attr['KO']
+
         self.race = h_data['r']
         if self.race == 'R_1':
             self.race == 'Human'
@@ -71,6 +72,7 @@ class Hero:
         elif self.race == 'R_4':
             self.race == 'Dwarf'
             self.LP_max = self.LP_max + 8
+        self.LP = self.LP_max
 
         # Talents
         talents = h_data['talents']  # Get data from .json file
@@ -163,6 +165,7 @@ class Hero:
         # Attributes
         for key in self.attr.keys():
             self.possible_probes.append(key)
+        self.possible_probes.append('take_hit')
 
     def perform_attr_probe(self, attr: str, mod: int = 0):
         print(f"The mighty {self.name} has incredible {self.attr[attr]} points in {attr}," +
@@ -294,6 +297,15 @@ class Hero:
         talents or attributes can be leveled ;-)
         """
 
+    def take_a_hit(self):
+        enemy = input(f'Aua! What has hit {self.name}? ')
+        damage = int(input(f'How much damage did {enemy} inflict? '))
+        self.LP = self.LP - damage
+        source = input(f'How did {enemy} hit {self.name}? ')
+        source_class = input(f'What is the general class of {source}? ')
+        print(f'OMG! {self.name} was hit by a {enemy} and suffered {damage} damge from this brutal attack with a {source} ({source_class}).')
+        self.logger.info(f'hit_taken,{self.name},{enemy},{damage},{source},{source_class}')
+
     def perform_action(self, user_action: str, modifier: int = 0) -> bool:
         # Quitting program
         if user_action == 'feddich':
@@ -303,7 +315,8 @@ class Hero:
                 for h in names:
                     print(f'{h} has left the building.')
             return False
-
+        elif user_action == 'take_hit':
+            self.take_a_hit()
         # Perform probe
         else:
             if user_action in self.tal:
