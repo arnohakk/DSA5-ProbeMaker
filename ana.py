@@ -48,7 +48,7 @@ def plot_hits(data):
     data_dea = data['dealer'].value_counts()
     plot_pie(data_dea, ax[2], title + ': Dealer')
 
-    # Make histogram
+    # Make histogram of damage strenght
     ax[3].hist(data['damage'])
     ax[3].title.set_text('Damage frequencies')
 
@@ -91,10 +91,6 @@ tal_probes = pd.DataFrame(tal_probes, columns=colnames_tal_probes)
 colnames_attr_probes = ['date', 'event_type', 'performer', 'attribute', 'aalue', 'modifier', 'roll', 'result',
                         'passed', 'meister', 'patz']
 attr_probes = pd.DataFrame(attr_probes, columns=colnames_attr_probes)
-
-print(hits_taken)
-print(hits_given)
-print(attr_probes)
 
 # Create plots
 plot_attr_probes(attr_probes)
