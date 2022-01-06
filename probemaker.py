@@ -179,6 +179,8 @@ class Hero:
             # ADD MORE MAGIC HERE #
             #######################
         else:
+            self.AE_max = 0
+            self.AE = 0
             print(f'{self.name} does not know any magic.')
 
         # Liturgies
@@ -419,10 +421,10 @@ class Hero:
         # Quitting program
         if user_action == 'feddich':
             if len(group) == 1:
-                print(f'{self.name} has left the building.')
+                print(f'{self.name} has left the building with {self.LP} LP and {self.AE} AE.')
             else:
                 for h in names:
-                    print(f'{h} has left the building.')
+                    print(f'{h} has left the building {group[h].LP} LP and {group[h].AE} AE.')
             return False
         # Perform probe
         else:
@@ -471,6 +473,8 @@ def run(group: List[Hero]):
                     warnings.warn("This hero is not known!")
                     print("Please provide a valid hero name!!!")
                 else:
+                    for h in names:
+                        print(f'{h} has left the building {group[h].LP} LP and {group[h].AE} AE.')
                     break
         if name != 'feddich':
             Digga = group[name]
