@@ -211,25 +211,25 @@ class Hero:
         old = self.LP
         self.LP = value
         print(f'LP set to {self.LP}')
-        self.logger.info(f'(reg_event; set_LP;{old};{self.LP}')
+        self.logger.info(f'(reg_event;set_LP;{self.name};{old};{self.LP}')
 
     def set_AE(self, value):
         old = self.AE
         self.AE = value
         print(f'AE set to {self.AE}')
-        self.logger.info(f'(reg_event; set_AE;{old};{self.AE}')
+        self.logger.info(f'(reg_event;set_AE;{self.name};{old};{self.AE}')
 
     def change_AE(self, value):
         old = self.AE
         self.AE = min(self.AE + value, self.AE_max)
         print(f'AE has changed from {old} to {self.AE}')
-        self.logger.info(f'(reg_event; change_AE;{old};{self.AE}')
+        self.logger.info(f'(reg_event;change_AE;{self.name};{old};{self.AE}')
 
     def change_LP(self, value):
         old = self.LP
         self.LP = min(self.LP + value, self.LP_max)
         print(f'LP has changed from {old} to {self.LP}')
-        self.logger.info(f'(reg_event; change_LP;{old};{self.LP}')
+        self.logger.info(f'(reg_event;change_LP;{self.name};{old};{self.LP}')
 
     def perform_attr_probe(self, attr: str, mod: int = 0):
         print(f"The mighty {self.name} has incredible {self.attr[attr]} points in {attr}," +
