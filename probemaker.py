@@ -205,7 +205,7 @@ class Hero:
         else:
             print('This should never happen :(')
 
-        self.logger.info(f'attr_probe,{self.name},{attr},{self.attr[attr]},{mod},{roll},{res},{passed},{meist},{patz}')
+        self.logger.info(f'attr_probe;{self.name};{attr};{self.attr[attr]};{mod};{roll};{res};{passed};{meist};{patz}')
 
     def talent_probe(self, talent: str, mod: int = 0):
         """Method to perform a talent probe
@@ -290,8 +290,8 @@ class Hero:
         elif mega_patz:
             print(f'{self.name} is an gigantic idiot and mega patzed.')
 
-        self.logger.info(f'tal_probe,{self.name},{talent},{self.tal[talent]},{mod},{rolls},{res1},{res2},'
-                         f'{res3},{points_left},{passed},{meister},{patz},{mega_meister},{mega_patz}')
+        self.logger.info(f'tal_probe;{self.name};{talent};{self.tal[talent]};{mod};{rolls};{res1};{res2};'
+                         f'{res3};{points_left};{passed};{meister};{patz};{mega_meister};{mega_patz}')
 
     def export(self, mode: str = "object"):
         """Method to export the hero either in JSON for Optolith or as an pickled object.
@@ -307,7 +307,7 @@ class Hero:
         source_class = input(f'What is the general class of {source}? ')
         print(f'OMG! {self.name} was hit by a {enemy} and suffered {damage} damge from this brutal attack with a '
               f'{source} ({source_class}).')
-        self.logger.info(f'hit_taken,{self.name},{enemy},{damage},{source},{source_class}')
+        self.logger.info(f'hit_taken;{self.name};{enemy};{damage};{source};{source_class}')
 
     def give_a_hit(self):
         enemy = input(f'SCHWUSSS! What did {self.name} hit? ')
@@ -316,7 +316,7 @@ class Hero:
         source_class = input(f'What is the general class of {source}? ')
         print(f'N1! A {enemy} was hit by a {self.name} and suffered {damage} damge from this brutal attack with a '
               f' {source} ({source_class}).')
-        self.logger.info(f'hit_given,{self.name},{enemy},{damage},{source},{source_class}')
+        self.logger.info(f'hit_given;{self.name};{enemy};{damage};{source};{source_class}')
 
     def perform_action(self, user_action: str, modifier: int = 0) -> bool:
         # Quitting program
@@ -390,7 +390,7 @@ def run(group: List[Hero]):
 
 if __name__ == "__main__":
     logging.basicConfig(filename='probe.log', encoding='utf-8', format='%(asctime)s %(message)s',
-                        datefmt='%Y-%m-%d %H:%M:%S', level=logging.DEBUG)
+                        datefmt='%Y-%m-%d %H:%M:%S;', level=logging.DEBUG)
     logger = logging.getLogger("Basic Logger")
     logger.info('Probemaker started')
 
