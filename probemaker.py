@@ -195,6 +195,7 @@ class Hero:
             passed = False
             print(f"{self.name} has failed")
         elif roll == 20:
+            passed = False
             print(f"{self.name} has failed, but will it be a complete disaster?")
             roll2 = randint(1, 20)
             res2 = self.attr[attr] - roll2 + mod
@@ -207,6 +208,7 @@ class Hero:
             print('This should never happen :(')
 
         self.logger.info(f'attr_probe;{self.name};{attr};{self.attr[attr]};{mod};{roll};{res};{passed};{meist};{patz}')
+        return passed
 
     def talent_probe(self, talent: str, mod: int = 0):
         """Method to perform a talent probe
@@ -293,6 +295,7 @@ class Hero:
 
         self.logger.info(f'tal_probe;{self.name};{talent};{self.tal[talent]};{mod};{rolls};{res1};{res2};'
                          f'{res3};{points_left};{passed};{meister};{patz};{mega_meister};{mega_patz}')
+        return passed
 
     def export(self, mode: str = "object"):
         """Method to export the hero either in JSON for Optolith or as an pickled object.
@@ -331,9 +334,9 @@ class Hero:
         # Perform probe
         else:
             if user_action in self.tal:
-                self.talent_probe(user_action, modifier)
+                return self.talent_probe(user_action, modifier)
             elif user_action in self.attr:
-                self.perform_attr_probe(user_action, modifier)
+                return self.perform_attr_probe(user_action, modifier)
             elif user_action == 'take_hit':
                 self.take_a_hit()
             elif user_action == 'give_hit':
