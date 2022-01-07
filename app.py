@@ -4,7 +4,6 @@ import os
 import socket
 import logging
 from probemaker import Hero
-from forms import ActionEnteringForm
 from flask import request
 
 if "settings.py" in os.listdir():
@@ -34,17 +33,27 @@ for h in hfiles:
     group[Digga.name] = Digga
     logger.info(f'{Digga.name} loaded')
 
+heroes = group
+possible_probes = []
+for h in group.values():
+    possible_probes += h.possible_probes
+actions = list(set(possible_probes))
+actions.sort()
 
 @app.route('/', methods=["GET", "POST"])
 def index():
     if request.method == 'POST':
+        print("getting here...")
+        print(request.form)
         hero = request.form['hero_name']
-        talent = request.form['talent_name']
+        talent = request.form['action_name']
+        modifier = int(request.form['modifier'])
         hero_instance = group[hero]
-        passed = hero_instance.perform_action(user_action=talent, modifier=0)
+        passed = hero_instance.perform_action(user_action=talent, modifier=modifier)
 
         print(f"Hero {hero} performing probe on talent {talent}.")
-        return render_template('index.html', hero=hero, talent=talent, passed=passed)
+        print(heroes)
+        return render_template('index.html', hero=hero, talent=talent, passed=passed, heroes=heroes, actions=actions)
     #form = ActionEnteringForm()
     #if form.validate_on_submit():
 
@@ -53,7 +62,7 @@ def index():
 
     #return redirect(url_for('hello'))
     #print(request.form['hero_name'])
-    return render_template('index.html')#, form=form)
+    return render_template('index.html', heroes=heroes, actions=actions)
 
 @app.route("/hello")
 def hello():

@@ -12,23 +12,71 @@
     {% endif %}
     {% if talent %}
         <p id="text3">Passed: {{ passed }}</p>
+        {% if passed %}
+            <img src="https://ridesharemechanic.com/wp-content/uploads/2020/06/passed-3-1024x455.png"
+                 alt="Passed!" width="100" height="40">
+        {% endif %}
+        {% if not passed %}
+            <img src="https://www.psdstamps.com/wp-content/uploads/2020/08/failed-stamp-png.png"
+                 alt="Failed!" width="100" height="60">
+        {% endif %}
     {% endif %}
-    <form method="post">
+    <!--<form method="post">
         <div class="form-group">
             <label for="hero">Hero</label>
-            <input type="text" name="hero_name"
+            <input type="text" name="hero_name" id="hero"
                    placeholder="hero name" class="form-control"
                    value="{{ request.form['hero'] }}"></input>
         </div>
 
         <div class="form-group">
             <label for="talent">Talent</label>
-            <input type="text" name="talent_name"
+            <input type="text" name="talent_name" id="talent"
                    placeholder="talent name" class="form-control"
                    value="{{ request.form['talent'] }}"></input>
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
+    </form>-->
+    <form method="post">
+      <fieldset>
+        <legend>Action selection:</legend>
+        <div class="form-group">
+            <label for="heroes">Hero</label>
+            <input class="form-control" list="heroes" id="hero_selection" placeholder="Type to search..."
+                   name = "hero_name">
+            <datalist id="heroes">
+                {% for key in heroes %}
+                    <option value="{{ key }}"> {{ key }}</option>
+                {% endfor %}
+            </datalist>
+            <label for="actions">Action</label>
+            <input class="form-control" list="actions" id="action_selection" placeholder="Type to search..."
+                   name = "action_name">
+            <datalist id="actions">
+                {% for key in actions %}
+                    <option value="{{ key }}"> {{ key }}</option>
+                {% endfor %}
+            </datalist>
+
+            <label for="modifier">Modifier</label>
+            <input type="number" name="modifier" id="modifier"
+                   placeholder="modifier value" class="form-control"
+                   value=0></input>
+        </div>
+      </fieldset>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+
+    <form action = "http://localhost:5000/uploader" method = "POST" enctype = "multipart/form-data">
+         <input type = "file" name = "file" value = "Add hero..."/>
+         <input type = "submit"/>
     </form>
 {% endblock %}
+
+
+
+

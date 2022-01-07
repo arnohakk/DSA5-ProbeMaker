@@ -338,9 +338,9 @@ class Hero:
             elif user_action in self.attr:
                 return self.perform_attr_probe(user_action, modifier)
             elif user_action == 'take_hit':
-                self.take_a_hit()
+                return self.take_a_hit()
             elif user_action == 'give_hit':
-                self.give_a_hit()
+                return self.give_a_hit()
             else:
                 raise ValueError('Talent ' + user_action + " not found, enter 'feddich' to quit")
             return True
