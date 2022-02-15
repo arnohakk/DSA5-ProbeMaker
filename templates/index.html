@@ -11,15 +11,26 @@
         <p id="text">Talent: {{ talent }}</p>
     {% endif %}
     {% if talent %}
-        <p id="text">rolls: {{ rolls }}</p>
         <p id="text3">Passed: {{ passed }}</p>
+
         {% if passed %}
-            <img src="https://ridesharemechanic.com/wp-content/uploads/2020/06/passed-3-1024x455.png"
-                 alt="Passed!" width="100" height="40">
+            <img src="http://www.lazerhorse.org/wp-content/uploads/2013/03/Drunk-Russian-Christmas-Party.png"
+                 alt="Passed!" width="400">
         {% endif %}
         {% if not passed %}
-            <img src="https://www.psdstamps.com/wp-content/uploads/2020/08/failed-stamp-png.png"
-                 alt="Failed!" width="100" height="60">
+            <img src="https://i.chzbgr.com/full/8129999872/hB828724D/drunk-level-russia"
+                 alt="Failed!" width="400" >
+        {% endif %}
+
+        <p id="text">die roll(s): {{ rolls }}</p>
+        <p id="text">modifier: {{ modifier }}</p>
+        {% if meister %}
+          <p id="text3">meister: {{ meister }}</p>
+          <p id="text3">mega_meister: {{ mega_meister }}</p>
+        {% endif %}
+        {% if patz %}
+          <p id="text3">patz: {{ patz }}</p>
+          <p id="text3">mega_patz: {{ mega_patz }}</p>
         {% endif %}
     {% endif %}
     <!--<form method="post">

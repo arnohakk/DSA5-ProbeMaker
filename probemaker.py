@@ -262,8 +262,10 @@ class Hero:
     def perform_attr_probe(self, attr: str, mod: int = 0):
         print(f"The mighty {self.name} has incredible {self.attr[attr]} points in {attr}," +
               f"the modifier for this probe is {mod}")
-        meist = False
+        meister = False
+        mega_meister = False
         patz = False
+        mega_patz = False
 
         roll = randint(1, 20)
         self.rolls = roll
@@ -279,13 +281,16 @@ class Hero:
                 res2 = self.attr[attr] - roll2 + mod
                 if res >= 0:
                     print('Yes!')
-                    meist = True
+                    meister = True
                 else:
                     print('No :(')
+                if roll2 ==1:
+                    mega_meister = True
         elif roll != 20:
             passed = False
             print(f"{self.name} has failed")
         elif roll == 20:
+            passed = False
             print(f"{self.name} has failed, but will it be a complete disaster?")
             roll2 = randint(1, 20)
             res2 = self.attr[attr] - roll2 + mod
@@ -294,10 +299,14 @@ class Hero:
                 patz = True
             else:
                 print("No, thanks to the Twelve")
+            if roll2 == 20:
+                mega_patz = True
         else:
             print('This should never happen :(')
 
-        self.logger.info(f'attr_probe;{self.name};{attr};{self.attr[attr]};{mod};{roll};{res};{passed};{meist};{patz}')
+        self.logger.info(f'attr_probe;{self.name};{attr};{self.attr[attr]};{mod};{roll};{res};{passed};{meister};{patz}')
+
+        return passed, meister, mega_meister, patz , mega_patz
 
     def skill_probe(self, skill: str, mod: int = 0):
         """Method to perform a skill probe
@@ -390,6 +399,7 @@ class Hero:
             self.change_AE(-self.skills[skill][5])
             self.logger.info(f'mag_probe;{self.name};{skill};{self.skills[skill]};{mod};{rolls};{res1};{res2};'
                              f'{res3};{points_left};{passed};{meister};{patz};{mega_meister};{mega_patz}')
+        return passed, meister, mega_meister, patz , mega_patz
 
     def export(self, mode: str = "object"):
         """Method to export the hero either in JSON for Optolith or as an pickled object.
@@ -428,9 +438,11 @@ class Hero:
         # Perform probe
         else:
             if user_action in self.skills:
-                self.skill_probe(user_action, modifier)
+                passed, meister, mega_meister, patz , mega_patz = self.skill_probe(user_action, modifier)
+                return passed, meister, mega_meister, patz , mega_patz
             elif user_action in self.attr:
-                self.perform_attr_probe(user_action, modifier)
+                passed, meister, mega_meister, patz , mega_patz = self.perform_attr_probe(user_action, modifier)
+                return passed, meister, mega_meister, patz , mega_patz
             elif user_action == 'take_hit':
                 self.take_a_hit()
             elif user_action == 'give_hit':
