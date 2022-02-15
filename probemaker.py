@@ -5,7 +5,6 @@ import os
 import json
 import logging
 from random import randint
-from pathlib import Path
 import warnings
 from typing import List
 from difflib import get_close_matches
@@ -36,6 +35,7 @@ class Hero:
         h_data = json.load(f)
         self.name = h_data['name']
         self.logger = logger
+        self.rolls = 'nothing'
         print('=======================')
         print('The great hero called ' + self.name + ' is being summoned into the working memory.')
         print('=======================')
@@ -266,6 +266,7 @@ class Hero:
         patz = False
 
         roll = randint(1, 20)
+        self.rolls = roll
         res = self.attr[attr] - roll + mod
         print(f'The die shows a {roll}')
 
@@ -285,7 +286,6 @@ class Hero:
             passed = False
             print(f"{self.name} has failed")
         elif roll == 20:
-            passed = False
             print(f"{self.name} has failed, but will it be a complete disaster?")
             roll2 = randint(1, 20)
             res2 = self.attr[attr] - roll2 + mod
@@ -298,7 +298,6 @@ class Hero:
             print('This should never happen :(')
 
         self.logger.info(f'attr_probe;{self.name};{attr};{self.attr[attr]};{mod};{roll};{res};{passed};{meist};{patz}')
-        return passed
 
     def skill_probe(self, skill: str, mod: int = 0):
         """Method to perform a skill probe
@@ -328,6 +327,7 @@ class Hero:
             str_mod = ' +- ' + str(mod)
 
         rolls = [randint(1, 20), randint(1, 20), randint(1, 20)]
+        self.rolls = rolls
         print('Die rolls:')
 
         print(self.skills[skill][0] + ': ' + str(rolls[0]) + ' (' + str(self.attr[self.skills[skill][0]]) + str_mod + ')')
@@ -430,9 +430,9 @@ class Hero:
             if user_action in self.skills:
                 self.skill_probe(user_action, modifier)
             elif user_action in self.attr:
-                return self.perform_attr_probe(user_action, modifier)
+                self.perform_attr_probe(user_action, modifier)
             elif user_action == 'take_hit':
-                return self.take_a_hit()
+                self.take_a_hit()
             elif user_action == 'give_hit':
                 self.give_a_hit()
             elif user_action == 'sLP':

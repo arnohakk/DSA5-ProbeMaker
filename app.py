@@ -50,10 +50,11 @@ def index():
         modifier = int(request.form['modifier'])
         hero_instance = group[hero]
         passed = hero_instance.perform_action(user_action=talent, modifier=modifier)
+        rolls = hero_instance.rolls
 
         print(f"Hero {hero} performing probe on talent {talent}.")
         print(heroes)
-        return render_template('index.html', hero=hero, talent=talent, passed=passed, heroes=heroes, actions=actions)
+        return render_template('index.html', hero=hero, talent=talent, passed=passed, heroes=heroes, actions=actions, rolls=rolls)
     #form = ActionEnteringForm()
     #if form.validate_on_submit():
 
