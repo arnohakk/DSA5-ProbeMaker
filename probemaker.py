@@ -512,7 +512,7 @@ def run(group: List[Hero]):
 if __name__ == "__main__":
     if debug_log:
         log_name = 'test.log'
-    elif not debug_log:
+    else:
         log_name = 'probe.log'
 
     logging.basicConfig(filename=log_name,
