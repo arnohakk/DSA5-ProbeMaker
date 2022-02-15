@@ -12,10 +12,16 @@ A little tool for The Dark Eye 5th Edition ([Das Schwarze Auge 5](https://ulisse
 
 ## Usage
 
-0. Get and install [Python 3](https://www.python.org/).
+0. Get and install [Python 3](https://www.python.org/) and run `pip install -r requirements.txt`
 1. Download/clone repository.
 2. Copy `settings_template.py` to `settings.py`.
 3. Adjust paths/file names/settings in `settings.py`.
+
+### Web version
+
+4. Run `python app.py` and check your console for the IP address to enter into your browser. Your are ready to go!
+
+### Console version
 4. Run `python probemaker.py`.
 5. If there is more than one hero loaded, you are first asked to enter the name of the hero you want to probe.
 6. Once asked, you can perform the following actions:
