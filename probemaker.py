@@ -438,23 +438,27 @@ class Hero:
         # Perform probe
         else:
             if user_action in self.skills:
-                passed, meister, mega_meister, patz , mega_patz = self.skill_probe(user_action, modifier)
-                return passed, meister, mega_meister, patz , mega_patz
+                return self.skill_probe(user_action, modifier)
             elif user_action in self.attr:
-                passed, meister, mega_meister, patz , mega_patz = self.perform_attr_probe(user_action, modifier)
-                return passed, meister, mega_meister, patz , mega_patz
+                return self.perform_attr_probe(user_action, modifier)
             elif user_action == 'take_hit':
                 self.take_a_hit()
+                return False, False, False, False, False
             elif user_action == 'give_hit':
                 self.give_a_hit()
+                return True, False, False, False, False
             elif user_action == 'sLP':
                 self.set_LP(modifier)
+                return True, False, False, False, False
             elif user_action == 'sAE':
                 self.set_AE(modifier)
+                return True, False, False, False, False
             elif user_action == 'cLP':
                 self.change_LP(modifier)
+                return True, False, False, False, False
             elif user_action == 'cAE':
                 self.change_AE(modifier)
+                return False, False, False, False, False
             else:
                 raise ValueError('Keyword ' + user_action + " not found, enter 'feddich' to quit")
             return True
