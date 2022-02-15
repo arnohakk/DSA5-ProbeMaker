@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from settings import debug_log
 
 
 def plot_pie(data2plot, ax, title):
@@ -56,7 +57,12 @@ def plot_hits(data):
 
 
 # Get log data
-f = open("probe.log", "r")
+if debug_log:
+    log_name = 'test.log'
+else:
+    log_name = 'probe.log'
+
+f = open(log_name, "r")
 data = f.readlines()
 f.close()
 
@@ -88,7 +94,7 @@ hits_given = pd.DataFrame(hits_given, columns=colnames_hits_given)
 colnames_tal_probes = ['date', 'event_type', 'performer', 'talent', 'values', 'Modifier', 'rolls', 'roll1', 'roll2',
                        'roll3', 'points_left', 'passed', 'meister', 'patz', 'mega_meister', 'mega_patz']
 tal_probes = pd.DataFrame(tal_probes, columns=colnames_tal_probes)
-colnames_attr_probes = ['date', 'event_type', 'performer', 'attribute', 'aalue', 'modifier', 'roll', 'result',
+colnames_attr_probes = ['date', 'event_type', 'performer', 'attribute', 'value', 'modifier', 'roll', 'result',
                         'passed', 'meister', 'patz']
 attr_probes = pd.DataFrame(attr_probes, columns=colnames_attr_probes)
 
