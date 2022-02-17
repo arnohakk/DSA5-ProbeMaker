@@ -29,6 +29,8 @@ class Hero:
     """
 
     def __init__(self, file, logger, show_values=False):
+        """ Initialize Hero class() by loading and processing .json file
+        """
 
         # Prepare and load hero's .json file
         f = open(file)
@@ -40,7 +42,7 @@ class Hero:
         print('The great hero called ' + self.name + ' is being summoned into the working memory.')
         print('=======================')
 
-        # Basic attributs
+        # Basic attributes
         attr = h_data['attr']['values']  # Get data from .json file
         attr_dict = {}
         for a in attr:
@@ -56,16 +58,17 @@ class Hero:
         self.attr['KO'] = attr_dict['ATTR_7'] if 'ATTR_7' in attr_dict else 8
         self.attr['KK'] = attr_dict['ATTR_8'] if 'ATTR_8' in attr_dict else 8
 
+        # Print attributes
         print('These are ' + self.name + "'s basic atrributes:")
         print('=======================')
         for att in self.attr:
             print(att + ': ' + str(self.attr[att]))
         print('=======================')
 
-        # Get race and compute derived stats
+        # Get AP
         self.ap = h_data['ap']
-        self.dead = False
 
+        # Get race and compute max LP
         self.LP_max = 2 * self.attr['KO']
         self.race = h_data['r']
         if self.race == 'R_1':
@@ -82,24 +85,26 @@ class Hero:
             self.LP_max = self.LP_max + 8
         print(f'{self.name} is a cute {self.race}!')
 
-        # Get leiteigenschaft
+        # Set current LP
+        self.LP = self.LP_max
+
+        # Get Leiteigenschaft of character
         LEG = h_data['attr']['attributeAdjustmentSelected']
         attr_dict = {'ATTR_1': 'MU', 'ATTR_2': 'KL', 'ATTR_3': 'IN', 'ATTR_4': 'CH', 'ATTR_5': 'FF',
                      'ATTR_6': 'GE', 'ATTR_7': 'KO', 'ATTR_8': 'KK'}
         self.leiteigenschaft = [attr_dict[LEG], self.attr[attr_dict[LEG]]]
         print(f'{self.name}`s leiteigenschaft is {self.leiteigenschaft[0]}.')
-
-        self.LP = self.LP_max
         print(f'{self.name} has {self.LP} of {self.LP_max} LP')
 
-        # Wundschwellen
+        # Wundschwellen (Levels for infliction of pain)
         self.wundschwelle = (self.LP_max/4)
         self.wundschwelle = [self.wundschwelle*3, self.wundschwelle*2, self.wundschwelle]
         self.wounds = 0
+        self.dead = False
         print(f'{self.name}`s Wundschwellen: {self.wundschwelle}')
 
-        # Talents
-        talents = h_data['talents']  # Get data from .json file
+        # Talents dict
+        talents = h_data['talents']  # Select data from .json file
         self.skills = dict()  # Dict to collect all talents
         self.skills['Fliegen'] = ['MU', 'IN', 'GE', talents['TAL_1'] if 'TAL_1' in talents else 0, 'talent']
         self.skills['Gaukeleien'] = ['MU', 'CH', 'FF', talents['TAL_2'] if 'TAL_2' in talents else 0, 'talent']
@@ -199,7 +204,7 @@ class Hero:
             print(self.skills)
         print('=======================')
 
-        # Get everything that can be probed on
+        # Create a dict of everything that can be probed on
         self.possible_probes = list()
         self.possible_probes.append('take_hit')
         self.possible_probes.append('give_hit')
@@ -208,14 +213,61 @@ class Hero:
         self.possible_probes.append('cLP')
         self.possible_probes.append('cAE')
 
-        # Talents
-        for key in self.skills.keys():
-            self.possible_probes.append(key)
-        # Attributes
+        # Add Attributes
         for key in self.attr.keys():
             self.possible_probes.append(key)
 
+        # Add Talents
+        for key in self.skills.keys():
+            self.possible_probes.append(key)
+
+    def perform_action(self, user_action: str, modifier: int = 0) -> bool:
+        """
+        Method called when asked to do something
+        """
+
+        # Quitting program
+        if user_action == 'feddich':
+            print(f'{self.name} has left the building with {self.LP} LP and {self.AE} AE.')
+            return False
+        # Perform probe
+        else:
+            if user_action in self.skills:
+                return self.skill_probe(user_action, modifier)
+            elif user_action in self.attr:
+                return self.perform_attr_probe(user_action, modifier)
+            elif user_action == 'take_hit':
+                self.take_a_hit()
+                return False, False, False, False, False
+            elif user_action == 'give_hit':
+                self.give_a_hit()
+                return True, False, False, False, False
+            elif user_action == 'sLP':
+                self.set_LP(modifier)
+                return True, False, False, False, False
+            elif user_action == 'sAE':
+                self.set_AE(modifier)
+                return True, False, False, False, False
+            elif user_action == 'cLP':
+                self.change_LP(modifier)
+                return True, False, False, False, False
+            elif user_action == 'cAE':
+                self.change_AE(modifier)
+                return False, False, False, False, False
+            else:
+                raise ValueError('Keyword ' + user_action + " not found, enter 'feddich' to quit")
+            return True
+
+    def change_LP(self, value):
+        """Change amount of AE by value"""
+        old = self.LP
+        self.LP = min(self.LP + value, self.LP_max)
+        print(f'LP has changed from {old} to {self.LP}')
+        self.logger.info(f'reg_event;change_LP;{self.name};{old};{self.LP}')
+        self.check_pain()
+
     def set_LP(self, value):
+        """Set LP to value"""
         old = self.LP
         self.LP = value
         print(f'LP set to {self.LP}')
@@ -223,22 +275,19 @@ class Hero:
         self.check_pain()
 
     def set_AE(self, value):
+        """Set AE to value"""
         old = self.AE
         self.AE = value
         print(f'AE set to {self.AE}')
         self.logger.info(f'reg_event;set_AE;{self.name};{old};{self.AE}')
+        self.check_pain()
 
     def change_AE(self, value):
+        """Change amount of AE by value"""
         old = self.AE
         self.AE = min(self.AE + value, self.AE_max)
         print(f'AE has changed from {old} to {self.AE}')
         self.logger.info(f'reg_event;change_AE;{self.name};{old};{self.AE}')
-
-    def change_LP(self, value):
-        old = self.LP
-        self.LP = min(self.LP + value, self.LP_max)
-        print(f'LP has changed from {old} to {self.LP}')
-        self.logger.info(f'reg_event;change_LP;{self.name};{old};{self.LP}')
         self.check_pain()
 
     def check_pain(self):    # Check if wounded( in pain)
@@ -255,13 +304,17 @@ class Hero:
             self.dead = True
             self.logger.info(f'{self.name};DEAD')
         if self.wounds > 0:
-            print(f'{self.name}: LEVEL OF PAIN: {self.wounds} (-{self.wounds} AT/PA))')
+            print(f'{self.name}: LEVEL(S) OF PAIN: {self.wounds} (-{self.wounds} AT/PA))')
         else:
             print(f'{self.name}: HAS NO PAIN')
 
     def perform_attr_probe(self, attr: str, mod: int = 0):
+        """ Performs an attribute probe with a modifier
+        """
         print(f"The mighty {self.name} has incredible {self.attr[attr]} points in {attr}," +
               f"the modifier for this probe is {mod}")
+
+        # Booleans indicating whether something was meisterlich or a patzer
         meister = False
         mega_meister = False
         patz = False
@@ -272,7 +325,7 @@ class Hero:
         res = self.attr[attr] - roll + mod
         print(f'The die shows a {roll}')
 
-        if res >= 0 and roll != 20:
+        if res >= 0 and roll != 20:  # Passed
             print(f"{self.name} has passed")
             passed = True
             if roll == 1:
@@ -286,22 +339,22 @@ class Hero:
                     print('No :(')
                 if roll2 ==1:
                     mega_meister = True
-        elif roll != 20:
-            passed = False
+        elif roll != 20:  # Failed by no patzer
             print(f"{self.name} has failed")
-        elif roll == 20:
             passed = False
+        elif roll == 20:  # Failed an CAN be a patzer
             print(f"{self.name} has failed, but will it be a complete disaster?")
+            passed = False
             roll2 = randint(1, 20)
             res2 = self.attr[attr] - roll2 + mod
-            if res <= 0:
+            if res <= 0:  # Patzer
                 print("Yes....")
                 patz = True
-            else:
+            else:  # Just a normal fail
                 print("No, thanks to the Twelve")
-            if roll2 == 20:
+            if roll2 == 20:  # Doppel-20 patzer
                 mega_patz = True
-        else:
+        else:  # Dedugging...
             print('This should never happen :(')
 
         self.logger.info(f'attr_probe;{self.name};{attr};{self.attr[attr]};{mod};{roll};{res};{passed};{meister};{patz}')
@@ -309,14 +362,14 @@ class Hero:
         return passed, meister, mega_meister, patz , mega_patz
 
     def skill_probe(self, skill: str, mod: int = 0):
-        """Method to perform a skill probe
+        """Method to perform a skill (talent, magic, or liturgy) probe
 
         skill -- name of talent, magic, or liturgie to probe
         mod -- modifier on probe
 
         """
 
-        # Booleans whether something critical occured
+        # Booleans indicating whether something was meisterlich or a patzer
         patz = False
         mega_patz = False
         meister = False
@@ -335,14 +388,18 @@ class Hero:
         else:
             str_mod = ' +- ' + str(mod)
 
+        # Roll dice
         rolls = [randint(1, 20), randint(1, 20), randint(1, 20)]
         self.rolls = rolls
+
+        # Print die roll results
         print('Die rolls:')
 
         print(self.skills[skill][0] + ': ' + str(rolls[0]) + ' (' + str(self.attr[self.skills[skill][0]]) + str_mod + ')')
         print(self.skills[skill][1] + ': ' + str(rolls[1]) + ' (' + str(self.attr[self.skills[skill][1]]) + str_mod + ')')
         print(self.skills[skill][2] + ': ' + str(rolls[2]) + ' (' + str(self.attr[self.skills[skill][2]]) + str_mod + ')')
 
+        # Check if something meisterlich or a patzer occured (Doppel-20 or 1, Triple-20 or 1 )
         if rolls.count(20) >= 2:
             patz = True
             if rolls.count(20) == 3:
@@ -352,11 +409,12 @@ class Hero:
             if rolls.count(1) == 3:
                 mega_meister = True
 
+        # Get results
         res1 = self.attr[self.skills[skill][0]] - rolls[0] + mod
         res2 = self.attr[self.skills[skill][1]] - rolls[1] + mod
         res3 = self.attr[self.skills[skill][2]] - rolls[2] + mod
 
-        # Check single rolls
+        # Check single results
         if res1 < 0:
             points_left = points_left + res1
         if res2 < 0:
@@ -392,6 +450,7 @@ class Hero:
         elif mega_patz:
             print(f'{self.name} is an gigantic idiot and mega patzed.')
 
+        # Log stuff
         if self.skills[skill][4] == 'talent':
             self.logger.info(f'tal_probe;{self.name};{skill};{self.skills[skill]};{mod};{rolls};{res1};{res2};'
                              f'{res3};{points_left};{passed};{meister};{patz};{mega_meister};{mega_patz}')
@@ -399,6 +458,7 @@ class Hero:
             self.change_AE(-self.skills[skill][5])
             self.logger.info(f'mag_probe;{self.name};{skill};{self.skills[skill]};{mod};{rolls};{res1};{res2};'
                              f'{res3};{points_left};{passed};{meister};{patz};{mega_meister};{mega_patz}')
+
         return passed, meister, mega_meister, patz , mega_patz
 
     def export(self, mode: str = "object"):
@@ -408,6 +468,8 @@ class Hero:
         """
 
     def take_a_hit(self):
+        """Take a hit by an enemy and log it"""
+
         enemy = input(f'Aua! What has hit {self.name}? ')
         damage = int(input(f'How much damage did {enemy} inflict? '))
         self.change_LP(-damage)
@@ -422,6 +484,7 @@ class Hero:
         self.logger.info(f'hit_taken;{self.name};{enemy};{damage};{source};{source_class}')
 
     def give_a_hit(self):
+        """Hit something"""
         enemy = input(f'SCHWUSSS! What did {self.name} hit? ')
         damage = int(input(f'How much damage did {self.name} inflict on {enemy}? '))
         source = input(f'How did {self.name} hit {enemy}? ')
@@ -429,40 +492,6 @@ class Hero:
         print(f'N1! A {enemy} was hit by a {self.name} and suffered {damage} damage from this brutal attack with a '
               f' {source} ({source_class}).')
         self.logger.info(f'hit_given;{self.name};{enemy};{damage};{source};{source_class}')
-
-    def perform_action(self, user_action: str, modifier: int = 0) -> bool:
-        # Quitting program
-        if user_action == 'feddich':
-            print(f'{self.name} has left the building with {self.LP} LP and {self.AE} AE.')
-            return False
-        # Perform probe
-        else:
-            if user_action in self.skills:
-                return self.skill_probe(user_action, modifier)
-            elif user_action in self.attr:
-                return self.perform_attr_probe(user_action, modifier)
-            elif user_action == 'take_hit':
-                self.take_a_hit()
-                return False, False, False, False, False
-            elif user_action == 'give_hit':
-                self.give_a_hit()
-                return True, False, False, False, False
-            elif user_action == 'sLP':
-                self.set_LP(modifier)
-                return True, False, False, False, False
-            elif user_action == 'sAE':
-                self.set_AE(modifier)
-                return True, False, False, False, False
-            elif user_action == 'cLP':
-                self.change_LP(modifier)
-                return True, False, False, False, False
-            elif user_action == 'cAE':
-                self.change_AE(modifier)
-                return False, False, False, False, False
-            else:
-                raise ValueError('Keyword ' + user_action + " not found, enter 'feddich' to quit")
-            return True
-
 
 def run(group: List[Hero]):
     # Playing loop asking for names and modifiers for talent probes
