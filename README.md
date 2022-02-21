@@ -12,8 +12,8 @@ A little tool for The Dark Eye 5th Edition ([Das Schwarze Auge 5](https://ulisse
 
 ## Usage
 
-0. Get and install [Python 3](https://www.python.org/) and run `pip install -r requirements.txt`
-1. Download/clone repository.
+0. Get and install [Python 3](https://www.python.org/).
+1. Download/clone repository and run `pip install -r requirements.txt`.
 2. Copy `settings_template.py` to `settings.py`.
 3. Adjust paths/file names/settings in `settings.py`.
 
